@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  .container
+    h4
+      b Application flow diagram - Demo
+    .jumbotron
+      | Application Search
+      br
+      #appdatas
+      for appdata in appdatas
+        div.appdata
+          div.applicantname=appdata.applicantname
+block pagescript
+  script(src='/javascripts/appflow_appSearch.js')
