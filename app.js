@@ -78,6 +78,16 @@ app.get('/appSearch', function(req, res){
   });
 });
 
+app.post('/appSearch', function(req, res){
+  appdataprovider.findAppSearchPageDataByStatus(req.param('statuscode'),function(error, appdatas, appstatuses){
+      res.render('appSearch', {
+            statuscode:req.param('statuscode'),
+            appdatas:appdatas, 
+            appstatuses:appstatuses
+        });
+  });
+});
+
 //search application 
 /*
 app.post('/appSearch', function(req, res){

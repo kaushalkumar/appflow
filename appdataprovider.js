@@ -52,8 +52,6 @@ AppDataProvider.prototype.findAllAppStatuses = function(callback) {
 
 //findAppSearchPageData
 AppDataProvider.prototype.findAppSearchPageData = function(callback) {
-
-	
 	var self = this;
 	this.getStatusCollection(function(error, appstatuses_collection) {
 		if( error ) callback(error)
@@ -79,5 +77,45 @@ AppDataProvider.prototype.findAppSearchPageData = function(callback) {
 		}
 	});
 };
+
+//findAppSearchPageDataByStatus
+AppDataProvider.prototype.findAppSearchPageDataByStatus = function(statuscode, callback) {
+	var self = this;
+	this.getStatusCollection(function(error, appstatuses_collection) {
+		if( error ) callback(error)
+		else {
+			appstatuses_collection.find().toArray(function(error, appstatuses_collection) {
+			if( error ) callback(error)
+			else {
+					self.getAppDataCollection(function(error, appdatas_collection) {
+						if( error ) callback(error)
+						else {
+							if(statuscode == '*') {
+							appdatas_collection.find().toArray(function(error, appdatas_collection) {
+							if( error ) callback(error)
+							else {
+								console.log(appdatas_collection);
+								console.log(appstatuses_collection);
+								callback(null, appdatas_collection, appstatuses_collection);
+								}
+							});
+							} else {
+								appdatas_collection.find({appstatuscode:statuscode}).toArray(function(error, appdatas_collection) {
+								if( error ) callback(error)
+								else {
+									console.log(appdatas_collection);
+									console.log(appstatuses_collection);
+									callback(null, appdatas_collection, appstatuses_collection);
+									}
+								});
+							}
+						}
+					});
+				}
+			});
+		}
+	});
+};
+
 
 exports.AppDataProvider = AppDataProvider;

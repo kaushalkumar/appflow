@@ -5,11 +5,32 @@ block content
     h4
       b Application flow diagram - Demo
     .jumbotron
-      | Application Search
-      br
-      #appdatas
-      for appdata in appdatas
-        div.appdata
-          div.applicantname=appdata.applicantname
+      form.form-horizontal(method="post", action="/appSearch")
+        div.form-group
+          label.col-sm-2.control-label Application Status
+          div.col-sm-10
+            select.form-control(name="statuscode")
+              option(value="*") --All Statuses--
+              #appstatuses
+              for appstatus in appstatuses
+                option(value="#{appstatus.appstatuscode}", selected= appstatus.appstatuscode==statuscode)
+                  = appstatus.appstatus
+        div.form-group
+          div.col-sm-offset-2.col-sm-10
+            button.btn.btn-default(type="submit") Search
+      table.table.table-striped.table-bordered
+        tr
+          th Application #
+          th Applicant Name
+          th Loan Amount
+        #appdatas
+        for appdata in appdatas
+          tr
+            td 
+              = appdata.appnumber
+            td 
+              = appdata.applicantname
+            td 
+              = appdata.loanamount
 block pagescript
   script(src='/javascripts/appflow_appSearch.js')
