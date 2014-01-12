@@ -88,6 +88,22 @@ app.post('/appSearch', function(req, res){
   });
 });
 
+app.get('/manageStatus', function(req, res){
+  appdataprovider.findAllAppStatuses(function(error, appstatuses){
+      res.render('manageStatus', {
+            appstatuses:appstatuses
+        });
+  });
+});
+
+app.post('/manageStatus', function(req, res){
+  appmonitorprovider.saveStatus(req.param('statuscode'), req.param('status'), function(error, appstatuses){
+      res.render('manageStatus', {
+            appstatuses:appstatuses
+        });
+  });
+});
+
 //search application 
 /*
 app.post('/appSearch', function(req, res){

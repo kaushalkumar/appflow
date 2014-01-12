@@ -1,0 +1,35 @@
+extends layout
+
+block content
+  .container
+    h4
+      b Application flow diagram - Demo
+    .jumbotron
+      form.form-horizontal(method="post", action="/manageStatus")
+        div.form-group
+          label.col-sm-2.control-label Application Status Code
+          div.col-sm-10
+            input.form-control(name="statuscode")
+        div.form-group
+          label.col-sm-2.control-label Application Status
+          div.col-sm-10
+            input.form-control(name="status")
+        div.form-group
+          div.col-sm-offset-2.col-sm-10
+            button.btn.btn-default(type="submit") Add Status
+      table.table.table-striped.table-bordered
+        tr
+          th Status Code
+          th Status
+        appstatuses
+        for appstatus in appstatuses
+          tr
+            td 
+              = appstatus.appstatuscode
+            td 
+              = appstatus.appstatus
+
+
+
+block pagescript
+  script(src='/javascripts/appflow_manageStatus.js')

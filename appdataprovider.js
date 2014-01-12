@@ -50,6 +50,19 @@ AppDataProvider.prototype.findAllAppStatuses = function(callback) {
     });
 };
 
+//save app status
+AppDataProvider.prototype.findAllAppStatuses = function(statuscode, status, callback) {
+    this.getStatusCollection(function(error, appstatuses_collection) {
+      if( error ) callback(error)
+      else {
+        appstatuses_collection.find().toArray(function(error, results) {
+          if( error ) callback(error)
+          else callback(null, results)
+        });
+      }
+    });
+};
+
 //findAppSearchPageData
 AppDataProvider.prototype.findAppSearchPageData = function(callback) {
 	var self = this;
