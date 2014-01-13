@@ -51,15 +51,29 @@ AppDataProvider.prototype.findAllAppStatuses = function(callback) {
 };
 
 //save app status
-AppDataProvider.prototype.findAllAppStatuses = function(statuscode, status, callback) {
-    this.getStatusCollection(function(error, appstatuses_collection) {
-      if( error ) callback(error)
-      else {
-        appstatuses_collection.find().toArray(function(error, results) {
-          if( error ) callback(error)
-          else callback(null, results)
-        });
-      }
+AppDataProvider.prototype.saveStatus = function(statuscode, status, callback) {
+	var self = this;
+    var data = {"appstatus":status,"appstatuscode":statuscode};
+	this.db.collection('appstatuses', function(error, appstatuses_collection) {
+		if( error ) callback(error)
+		else {
+	        appstatuses_collection.insert(data,function(error, appstatuses_collection) {
+			if( error ) callback(error)
+			else {
+					self.getStatusCollection(function(error, appstatuses) {
+						if( error ) callback(error)
+						else {
+							appstatuses.find().toArray(function(error, appstatuses) {
+							if( error ) callback(error)
+							else {
+								callback(null, appstatuses);
+								}
+							});
+						}
+					});
+				}
+			});
+		}
     });
 };
 

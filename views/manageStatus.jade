@@ -5,15 +5,15 @@ block content
     h4
       b Application flow diagram - Demo
     .jumbotron
-      form.form-horizontal(method="post", action="/manageStatus")
+      form.form-horizontal(method="post", action="/saveStatus")
         div.form-group
           label.col-sm-2.control-label Application Status Code
           div.col-sm-10
-            input.form-control(name="statuscode")
+            input.form-control(name="statuscode", placeholder="Application Status Code")
         div.form-group
           label.col-sm-2.control-label Application Status
           div.col-sm-10
-            input.form-control(name="status")
+            input.form-control(name="status", placeholder="Application Status")
         div.form-group
           div.col-sm-offset-2.col-sm-10
             button.btn.btn-default(type="submit") Add Status

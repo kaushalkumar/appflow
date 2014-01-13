@@ -96,8 +96,8 @@ app.get('/manageStatus', function(req, res){
   });
 });
 
-app.post('/manageStatus', function(req, res){
-  appmonitorprovider.saveStatus(req.param('statuscode'), req.param('status'), function(error, appstatuses){
+app.post('/saveStatus', function(req, res){
+  appdataprovider.saveStatus(req.param('statuscode'), req.param('status'), function(error, appstatuses){
       res.render('manageStatus', {
             appstatuses:appstatuses
         });
