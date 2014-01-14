@@ -1,5 +1,7 @@
+var lastNodeNumber = 0;
 window.onload = function() {
 	highlightMenu('menu_manage');
+	//TODO:populate last node number
 }
 
 jsPlumb.ready(function() {
@@ -10,7 +12,7 @@ jsPlumb.ready(function() {
 	// the overlays to decorate each connection with.  note that the label overlay uses a function to generate the label text; in this
 	// case it returns the 'labelText' member that we set on each connection in the 'init' method below.
 	ConnectionOverlays : [
-		[ "Arrow", { location:1 } ],
+		[ "Arrow", { location:0.99, width:10, length:7 } ],
 		[ "Label", { 
 			location:0.1,
 			id:"label",
@@ -20,17 +22,17 @@ jsPlumb.ready(function() {
 	Container:containerId
 	});		
 	var connectorPaintStyle = {
-		lineWidth:4,
+		lineWidth:3,
 		strokeStyle:"#61B7CF",
 		joinstyle:"round",
 		outlineColor:"white",
-		outlineWidth:2
+		outlineWidth:1
 	};
 	// .. and this is the hover style. 
 	var connectorHoverStyle = {
-		lineWidth:4,
+		lineWidth:3,
 		strokeStyle:"#216477",
-		outlineWidth:2,
+		outlineWidth:1,
 		outlineColor:"white"
 	};
 	var endpointHoverStyle = {
@@ -38,8 +40,29 @@ jsPlumb.ready(function() {
 		strokeStyle:"#216477"
 	};
 
-	// the definition of source endpoints (the small blue ones)
-	var endpoint = {
+	// the definition of anchor point (the small blue ones)
+	var anchorpoint = {
+		isTarget:true,
+		isSource:true,
+		maxConnections:-1,
+		endpoint:"Dot",
+		paintStyle:{ 
+			strokeStyle:"#7AB02C",
+			fillStyle:"transparent",
+			radius:1,
+			lineWidth:3 
+		},				
+		connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5, alwaysRespectStubs:true } ],								                
+		connectorStyle:connectorPaintStyle,
+		hoverPaintStyle:endpointHoverStyle,
+		connectorHoverStyle:connectorHoverStyle,
+		dragOptions:{}
+	};		
+
+	// the definition of anchor point (the small blue ones)
+	var sourceanchorpoint = {
+		isSource:true,
+		maxConnections:-1,
 		endpoint:"Dot",
 		paintStyle:{ 
 			strokeStyle:"#7AB02C",
@@ -54,10 +77,42 @@ jsPlumb.ready(function() {
 		dragOptions:{}
 	};		
 	
-	var _addEndpoints = function(nodeId, anchorArr) {
+	// the definition of anchor point (the small blue ones)
+	var targetanchorpoint = {
+		isTarget:true,
+		maxConnections:-1,
+		endpoint:"Dot",
+		paintStyle:{ 
+			strokeStyle:"#7AB02C",
+			fillStyle:"transparent",
+			radius:1,
+			lineWidth:3 
+		},				
+		connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5, alwaysRespectStubs:true } ],								                
+		connectorStyle:connectorPaintStyle,
+		hoverPaintStyle:endpointHoverStyle,
+		connectorHoverStyle:connectorHoverStyle,
+		dragOptions:{}
+	};
+
+	var _addAnchorpoints = function(nodeId, anchorArr) {
 		for (var i = 0; i < anchorArr.length; i++) {
 			var anchorUUID = nodeId + anchorArr[i];
-			instance.addEndpoint(nodeId, endpoint, { anchor:anchorArr[i], uuid:anchorUUID });						
+			instance.addEndpoint(nodeId, anchorpoint, { anchor:anchorArr[i], uuid:anchorUUID });						
+		}
+	};
+
+	var _addSourceAnchorpoints = function(nodeId, anchorArr) {
+		for (var i = 0; i < anchorArr.length; i++) {
+			var anchorUUID = nodeId + anchorArr[i];
+			instance.addEndpoint(nodeId, sourceanchorpoint, { anchor:anchorArr[i], uuid:anchorUUID });						
+		}
+	};
+
+	var _addTargetAnchorpoints = function(nodeId, anchorArr) {
+		for (var i = 0; i < anchorArr.length; i++) {
+			var anchorUUID = nodeId + anchorArr[i];
+			instance.addEndpoint(nodeId, targetanchorpoint, { anchor:anchorArr[i], uuid:anchorUUID });						
 		}
 	};
 
@@ -67,34 +122,27 @@ jsPlumb.ready(function() {
 		var parentDivHeight = $(parentDiv).height();
 		var parentDivWidth = $(parentDiv).width();
 		
-		var startId = 'startId';
+		var startId = '_nodeStartId';
 		$(parentDiv).append("<div id='"+startId+"' class='startNode'></div>" );
 		$('div#'+startId).css(	{"position":"absolute",
 								"top":(parentDivHeight/2)-$('div#'+startId).height()/2,
 								"left":"5px"
 								}
 		);
-		try{
-			_addEndpoints(startId, ["TopCenter", "BottomCenter", "RightMiddle"]);
-		}catch (err) {
-			console.log("Error=>"+err);
-		}
-		var endId = 'endId';
+		var anchorArr = new Array(3);
+		_addSourceAnchorpoints(startId, ["TopCenter", "BottomCenter", "RightMiddle"]);
+		var endId = '_nodeEndId';
 		$(parentDiv).append("<div id='"+endId+"' class='endNode'></div>" );
 		$('div#'+endId).css(	{"position":"absolute",
 								"top":(parentDivHeight/2)-$('div#'+startId).height()/2,
 								"right":"5px"
 								}
 		);
-		_addEndpoints(endId, ["TopCenter", "BottomCenter", "LeftMiddle"]);
+		_addTargetAnchorpoints(endId, ["TopCenter", "BottomCenter", "LeftMiddle"]);
 	}
 	// suspend drawing and initialise.
 	instance.doWhileSuspended(function() {
 		addStartEndNodeDivs();
-
-		// make all the window divs draggable						
-//		instance.draggable($(".startNode"), { containment:"parent"});
-//		instance.draggable($(".endNode"), { containment:"parent" });
 
 	});
 
@@ -106,12 +154,13 @@ jsPlumb.ready(function() {
 		var appstatus = $("input#statusId").val();
 		var appstatuscode = $("input#statusCodeId").value;
 
-		var nodeId = 'node1Id';
-		var nodeGroupId = 'node1GroupId';
-		var nodeNameId = 'node1NameId';
-		var nodeFrequencyId = 'node1FrequencyId';
-		var nodeLinkId = 'node1LinkId';
-
+		lastNodeNumber = lastNodeNumber+1;
+		var nodeId = '_nodeId'+lastNodeNumber;
+		var nodeGroupId = '_nodeGroupId'+lastNodeNumber;
+		var nodeNameId = '_nodeNameId'+lastNodeNumber;
+		var nodeFrequencyId = '_nodeFrequencyId'+lastNodeNumber;
+		var nodeLinkId = '_nodeLinkId'+lastNodeNumber;
+		
 		$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>"+appstatus+"</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>4</div><div id='"+nodeLinkId+"' class='nodeLink'><a href=''> Lookup</a></div></div></div>" );
 		$('div#'+nodeId).css(	{"position":"absolute",
 								"top":0,
@@ -120,7 +169,21 @@ jsPlumb.ready(function() {
 		);
 		//make node draggable
 		instance.draggable($("#"+nodeId), { containment:"parent" });
-		_addEndpoints(nodeId, ["TopCenter", "BottomCenter", "LeftMiddle", "RightMiddle"]);
+		_addAnchorpoints(nodeId, ["TopCenter", "BottomCenter", "LeftMiddle", "RightMiddle"]);
+	});
+
+	$("a#saveAppFlowId").click(function saveAppFlow() {
+		alert('hi');
+		var parentDiv = $("div"+"#"+containerId);
+		$(parentDiv).css("position","relative");
+
+		var nodes = $("div[id^=_nodeId]");
+		var startnode = $("div#_nodeStartId");
+		var endnode = $("div#_nodeEndId");
+		console.log(jsPlumb.getDefaultScope());
+		var connections = jsPlumb.getConnections();
+		console.log(connections);
+
 	});
 
 
