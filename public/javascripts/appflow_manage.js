@@ -2,8 +2,13 @@ var lastNodeNumber = 0;
 window.onload = function() {
 	highlightMenu('menu_manage');
 	//TODO:populate last node number
+	//show saved data
+	plotStatusGraph();
 }
 
+function plotStatusGraph() {
+
+}
 jsPlumb.ready(function() {
 	var containerId = "flowDiagramDivId";
 	var instance = jsPlumb.getInstance({
@@ -152,16 +157,17 @@ jsPlumb.ready(function() {
 		$(parentDiv).css("position","relative");
 
 		var appstatus = $("input#statusId").val();
-		var appstatuscode = $("input#statusCodeId").value;
+		var appstatuscode = $("input#statusCodeId").val();
 
 		lastNodeNumber = lastNodeNumber+1;
 		var nodeId = '_nodeId'+lastNodeNumber;
 		var nodeGroupId = '_nodeGroupId'+lastNodeNumber;
 		var nodeNameId = '_nodeNameId'+lastNodeNumber;
+		var nodeCodeId = '_nodeCodeId'+lastNodeNumber;
 		var nodeFrequencyId = '_nodeFrequencyId'+lastNodeNumber;
 		var nodeLinkId = '_nodeLinkId'+lastNodeNumber;
 		
-		$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>"+appstatus+"</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>4</div><div id='"+nodeLinkId+"' class='nodeLink'><a href=''> Lookup</a></div></div></div>" );
+		$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>"+appstatus+"</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>4</div><div id='"+nodeLinkId+"' class='nodeLink'><a href=''><input type='hidden' id='"+nodeCodeId+"' value='"+appstatuscode+"'/>Lookup</a></div></div></div>" );
 		$('div#'+nodeId).css(	{"position":"absolute",
 								"top":0,
 								"left":0
@@ -177,11 +183,34 @@ jsPlumb.ready(function() {
 		var parentDiv = $("div"+"#"+containerId);
 		$(parentDiv).css("position","relative");
 
-		var nodes = $("div[id^=_nodeId]");
 		var startnode = $("div#_nodeStartId");
+		var startNodeTop = $("div#_nodeStartId").css('top')
+		var startNodeLeft = $("div#_nodeStartId").css('left')
+
 		var endnode = $("div#_nodeEndId");
+		var endNodeTop = $("div#_nodeStartId").css('top')
+		var endNodeLeft = $("div#_nodeStartId").css('left')
+
+		var nodes = $("div[id^=_nodeId]");
+		for (counter = 0; counter<nodes.length; counter++)
+		{
+			var node = nodes[counter];
+			var nodeId = node.id;
+			var nodeTop = node.style.top;
+			var nodeLeft = node.style.left;
+			var nodeStatus = node.children[0].children[0].innerText;
+			var nodeStatusCode = node.children[0].children[2].children[0].children[0].value;
+			console.log(node);
+		}
 		console.log(jsPlumb.getDefaultScope());
-		var connections = jsPlumb.getConnections();
+		var connections = instance.getConnections();
+		console.log(connections.length)
+		for(i=0; i<connections.length; i++) { 
+			var target = connections[i].targetId ; 
+			var source = connections[i].sourceId ;
+			console.log(target);
+			console.log(source);
+		}
 		console.log(connections);
 
 	});
