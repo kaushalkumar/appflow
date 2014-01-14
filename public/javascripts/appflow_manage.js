@@ -156,8 +156,8 @@ jsPlumb.ready(function() {
 		var parentDiv = $("div"+"#"+containerId);
 		$(parentDiv).css("position","relative");
 
-		var appstatus = $("input#statusId").val();
-		var appstatuscode = $("input#statusCodeId").val();
+		var appstatus = $('select[name="statuscode"]').find('option:selected').text();
+		var appstatuscode = $('select[name="statuscode"]').find('option:selected').val();
 
 		lastNodeNumber = lastNodeNumber+1;
 		var nodeId = '_nodeId'+lastNodeNumber;

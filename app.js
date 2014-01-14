@@ -54,9 +54,9 @@ app.get('/index', function(req, res){
 });
 
 app.get('/manage', function(req, res){
-  appmonitorprovider.findAll(function(error, appflownodes){
+  appdataprovider.findAllAppStatuses(function(error, appstatuses){
       res.render('manage', {
-            appflownodes:appflownodes
+            appstatuses:appstatuses
         });
   });
 });
