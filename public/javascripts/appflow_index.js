@@ -120,29 +120,67 @@ console.log((3*parentDivWidth/4)-$('div#'+nodeId).outerWidth()/2);
 
 		// this is the paint style for the connecting lines..		
 		var connectorPaintStyle = {
-			lineWidth:4,
-			strokeStyle:"#61B7CF",
-			joinstyle:"round",
-			outlineColor:"white",
-			outlineWidth:2
-		},
+		lineWidth:4,
+		strokeStyle:"#61B7CF",
+		joinstyle:"round",
+		outlineColor:"white",
+		outlineWidth:2
+		};
 		// .. and this is the hover style. 
-		connectorHoverStyle = {
+		var connectorHoverStyle = {
 			lineWidth:4,
 			strokeStyle:"#216477",
 			outlineWidth:2,
 			outlineColor:"white"
-		}
-		endpointHoverStyle = {
+		};
+		var endpointHoverStyle = {
 			fillStyle:"#216477",
 			strokeStyle:"#216477"
-		},
-		jsPlumb.connect({ source:"startId", target:"node1Id", anchors:["Right", "Left"], connector:[ "Straight"],  endpoints:["Blank","Blank"] });
-		jsPlumb.connect({ source:"node1Id", target:"node2Id", anchors:["Right", "Left"], connector:[ "Straight"],  endpoints:["Blank","Blank"] });
-		jsPlumb.connect({ source:"node1Id", target:"node3Id", anchors:["Right", "Left"], connector:[ "Straight"],  endpoints:["Blank","Blank"] });
-		jsPlumb.connect({ source:"node2Id", target:"node4Id", anchors:["Right", "Left"], connector:[ "Straight"],  endpoints:["Blank","Blank"] });
-		jsPlumb.connect({ source:"node3Id", target:"node4Id", anchors:["Right", "Left"], connector:[ "Straight"],  endpoints:["Blank","Blank"] });
-		jsPlumb.connect({ source:"node4Id", target:"endId", anchors:["Right", "Left"], connector:[ "Straight"],  endpoints:["Blank","Blank"] });
+		};
+		// the definition of source endpoints (the small blue ones)
+
+		var endpoint = {
+			endpoint:"Dot",
+			paintStyle:{ 
+				strokeStyle:"#7AB02C",
+				fillStyle:"transparent",
+				radius:1,
+				lineWidth:3 
+			},				
+			connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5, alwaysRespectStubs:true } ],								                
+			connectorStyle:connectorPaintStyle,
+			hoverPaintStyle:endpointHoverStyle,
+			connectorHoverStyle:connectorHoverStyle,
+			dragOptions:{}
+		};
+		
+		var _addEndpoints = function(toId, ancArr){
+			for (var i = 0; i < ancArr.length; i++) {
+					var sourceUUID = toId + ancArr[i];
+					jsPlumb.addEndpoint(toId, endpoint, { anchor:ancArr[i], uuid:sourceUUID});						
+				}
+		};
+
+		_addEndpoints("startId",["RightMiddle"]);
+		_addEndpoints("endId",["LeftMiddle"]);
+		_addEndpoints("node1Id", ["TopCenter", "BottomCenter","LeftMiddle", "RightMiddle"]);			
+		_addEndpoints("node2Id", ["LeftMiddle", "BottomCenter","TopCenter", "RightMiddle"]);
+		_addEndpoints("node3Id", ["RightMiddle", "BottomCenter","LeftMiddle", "TopCenter"]);
+		_addEndpoints("node4Id", ["LeftMiddle", "RightMiddle","TopCenter", "BottomCenter"]);
+
+		jsPlumb.connect({uuids:["startIdRightMiddle", "node1IdLeftMiddle"], overlays:[["Arrow",{location:0.99}]]});
+		jsPlumb.connect({uuids:["node1IdRightMiddle", "node2IdLeftMiddle"], overlays:[["Arrow",{location:0.99}]]});
+		jsPlumb.connect({uuids:["node2IdRightMiddle", "node4IdLeftMiddle"], overlays:[["Arrow",{location:0.99}]]});
+		jsPlumb.connect({uuids:["node4IdBottomCenter", "node3IdRightMiddle"], overlays:[["Arrow",{location:0.99}]]});
+		jsPlumb.connect({uuids:["node3IdLeftMiddle", "node1IdBottomCenter"], overlays:[["Arrow",{location:0.99}]]});
+		jsPlumb.connect({uuids:["node4IdRightMiddle", "endIdLeftMiddle"], overlays:[["Arrow",{location:0.99}]]});
+
+		/*jsPlumb.connect({ source:"startId", target:"node1Id", anchors:["Right", "Left"], connector:[ "Flowchart"],  endpoints:["Dot","Dot"] });
+		jsPlumb.connect({ source:"node1Id", target:"node2Id", anchors:["Right", "Left"], connector:[ "Flowchart"],  endpoints:["Dot","Dot"] });
+		jsPlumb.connect({ source:"node1Id", target:"node3Id", anchors:["Right", "Left"], connector:[ "Flowchart"],  endpoints:["Dot","Dot"] });
+		jsPlumb.connect({ source:"node2Id", target:"node4Id", anchors:["Right", "Left"], connector:[ "Flowchart"],  endpoints:["Dot","Dot"] });
+		jsPlumb.connect({ source:"node3Id", target:"node4Id", anchors:["Right", "Left"], connector:[ "Flowchart"],  endpoints:["Dot","Dot"] });
+		jsPlumb.connect({ source:"node4Id", target:"endId", anchors:["Right", "Left"], connector:[ "Flowchart"],  endpoints:["Dot","Dot"] });*/
      });
 	//connect divs ENDS
 
