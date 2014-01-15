@@ -145,4 +145,25 @@ AppDataProvider.prototype.findAppSearchPageDataByStatus = function(statuscode, c
 };
 
 
+//save application
+AppDataProvider.prototype.saveApplication = function(applicantName, loanAmount, statuscode, callback) {
+	var self = this;
+	var data = {"appnumber":"14","applicantname":applicantName,"loanamount":loanAmount,"appstatuscode":statuscode};
+	this.db.collection('appdatas', function(error, appdatas_collection) {
+		if( error ) callback(error)
+		else {
+			appdatas_collection.insert(data,function(error, appdatas_collection) {
+			if( error ) callback(error)
+			else {
+					self.findAppSearchPageDataByStatus(statuscode,function(error, appdatas, appstatuses) {
+						if( error ) callback(error)
+						else callback(null, appdatas, appstatuses);
+					});
+				}
+			});
+		}
+    });
+};
+
+
 exports.AppDataProvider = AppDataProvider;

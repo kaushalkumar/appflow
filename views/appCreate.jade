@@ -1,13 +1,30 @@
 extends layout
-
+  
 block content
   .container
     h4
       b Application flow diagram - Demo
     .jumbotron
-      | Application Create
-      br
-
-
+      form.form-horizontal(method="post", action="/appCreate")
+        div.form-group
+          label.col-sm-2.control-label Applicant name
+          div.col-sm-10
+            input.form-control(name="applicantName")
+        div.form-group
+          label.col-sm-2.control-label Loan amount
+          div.col-sm-10
+            input.form-control(name="loanAmount")
+        div.form-group
+          label.col-sm-2.control-label Application status
+          div.col-sm-10
+            select.form-control(name="statuscode")
+              #appstatuses
+              for appstatus in appstatuses
+                option(value="#{appstatus.appstatuscode}")
+                  = appstatus.appstatus
+        div.form-group
+          div.col-sm-offset-2.col-sm-10
+            button.btn.btn-default(type="submit") Save
+            button.btn.btn-default(type="submit") Cancel
 block pagescript
   script(src='/javascripts/appflow_appCreate.js')

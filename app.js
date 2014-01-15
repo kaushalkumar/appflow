@@ -69,6 +69,17 @@ app.get('/appCreate', function(req, res){
   });
 });
 
+//Save application
+app.post('/appCreate', function(req, res){
+  appdataprovider.saveApplication(req.param('applicantName'), req.param('loanAmount'), req.param('statuscode'), function(error, appdatas, appstatuses){
+      res.render('appSearch', {
+            statuscode:req.param('statuscode'),
+            appdatas:appdatas, 
+            appstatuses:appstatuses
+        });
+  });
+});
+
 app.get('/appSearch', function(req, res){
   appdataprovider.findAppSearchPageData(function(error, appdatas, appstatuses){
       res.render('appSearch', {
