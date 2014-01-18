@@ -23,6 +23,7 @@ block content
           th Application #
           th Applicant Name
           th Loan Amount
+          th Application Status
         #appdatas
         for appdata in appdatas
           tr
@@ -32,5 +33,9 @@ block content
               = appdata.applicantname
             td 
               = appdata.loanamount
+            td 
+              for appstatus in appstatuses
+                if appdata.appstatuscode==appstatus.appstatuscode
+                  = appstatus.appstatus
 block pagescript
   script(src='/javascripts/appflow_appSearch.js')
