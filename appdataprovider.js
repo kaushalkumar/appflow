@@ -4,6 +4,8 @@ var Server = require('mongodb').Server;
 var BSON = require('mongodb').BSON;
 var ObjectID = require('mongodb').ObjectID;
 
+var appNumber = null;
+
 AppDataProvider = function(host, port) {
   this.db= new Db('omappdb', new Server(host, port, {safe: false}, {auto_reconnect: true}, {}), {w:1});
   this.db.open(function(){});
@@ -37,8 +39,11 @@ AppDataProvider.prototype.findAllAppData = function(callback) {
     });
 };
 
-//find all appstatuses
+//find all appstatuses and populates appnumber (if not populated earlier)
 AppDataProvider.prototype.findAllAppStatuses = function(callback) {
+	if(appNumber == null) {
+		this.populateAppNumberFromDB(callback);
+	}
     this.getStatusCollection(function(error, appstatuses_collection) {
       if( error ) callback(error)
       else {
@@ -144,11 +149,11 @@ AppDataProvider.prototype.findAppSearchPageDataByStatus = function(statuscode, c
 	});
 };
 
-
 //save application
 AppDataProvider.prototype.saveApplication = function(applicantName, loanAmount, statuscode, callback) {
 	var self = this;
-	var data = {"appnumber":"14","applicantname":applicantName,"loanamount":loanAmount,"appstatuscode":statuscode};
+	var data = {"appnumber":appNumber,"applicantname":applicantName,"loanamount":loanAmount,"appstatuscode":statuscode};
+	appNumber = appNumber+1;
 	this.db.collection('appdatas', function(error, appdatas_collection) {
 		if( error ) callback(error)
 		else {
@@ -165,5 +170,19 @@ AppDataProvider.prototype.saveApplication = function(applicantName, loanAmount, 
     });
 };
 
+//populateAppNumberFromDB
+AppDataProvider.prototype.populateAppNumberFromDB= function(callback){
+	  this.db.collection('appdatas', function(error, appdatas_collection) {
+		if( error ) {
+			callback(error);
+		} else {
+			appdatas_collection.find().sort([['appnumber', -1]]).limit(1).nextObject(function(err, appWithMaxAppNumber) {
+				if(appNumber == null) {
+					appNumber = appWithMaxAppNumber.appnumber+1;
+				}
+			});
+		}
+	  });
+	}
 
 exports.AppDataProvider = AppDataProvider;
