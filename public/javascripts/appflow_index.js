@@ -47,7 +47,7 @@ function addStatusNodeDivs(parentDivId) {
 	var nodeFrequencyId = 'node1FrequencyId';
 	var nodeLinkId = 'node1LinkId';
 
-	$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>Submitted</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>4</div><div id='"+nodeLinkId+"' class='nodeLink'><a href=''> Lookup</a></div></div></div>" );
+	$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>Submitted</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>4</div><div id='"+nodeLinkId+"' class='nodeLink'><a href='/appSearch?statuscode=APP_STATUS_SUBMITTED'> Lookup</a></div></div></div>" );
 	$('div#'+nodeId).css(	{"position":"absolute",
 							"top":(parentDivHeight/2)-$('div#'+nodeId).outerHeight()/2,
 							"left":(parentDivWidth/4)-$('div#'+nodeId).outerWidth()/2
@@ -62,7 +62,7 @@ console.log((parentDivWidth/4)-$('div#'+nodeId).outerWidth()/2);
 	nodeFrequencyId = 'node2FrequencyId';
 	nodeLinkId = 'node2LinkId';
 
-	$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>Offer</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>4</div><div id='"+nodeLinkId+"' class='nodeLink'><a href=''> Lookup</a></div></div></div>" );
+	$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>Offer</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>4</div><div id='"+nodeLinkId+"' class='nodeLink'><a href='/appSearch?statuscode=APP_STATUS_OFFERCREATED'> Lookup</a></div></div></div>" );
 	$('div#'+nodeId).css(	{"position":"absolute",
 							"top":(parentDivHeight/3)-$('div#'+nodeId).outerHeight()/2,
 							"left":(parentDivWidth/2)-$('div#'+nodeId).outerWidth()/2
@@ -78,7 +78,7 @@ console.log((parentDivWidth/2)-$('div#'+nodeId).outerWidth()/2);
 	nodeFrequencyId = 'node3FrequencyId';
 	nodeLinkId = 'node3LinkId';
 
-	$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>Counter Offer</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>4</div><div id='"+nodeLinkId+"' class='nodeLink'><a href=''> Lookup</a></div></div></div>" );
+	$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>Counter Offer</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>4</div><div id='"+nodeLinkId+"' class='nodeLink'><a href='/appSearch?statuscode=APP_STATUS_CTROFFERCREATED'> Lookup</a></div></div></div>" );
 	$('div#'+nodeId).css(	{"position":"absolute",
 							"top":(2*parentDivHeight/3)-$('div#'+nodeId).outerHeight()/2,
 							"left":(parentDivWidth/2)-$('div#'+nodeId).outerWidth()/2
@@ -95,7 +95,7 @@ console.log((parentDivWidth/2)-$('div#'+nodeId).outerWidth()/2);
 	nodeFrequencyId = 'node4FrequencyId';
 	nodeLinkId = 'node4LinkId';
 
-	$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>Approved</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>4</div><div id='"+nodeLinkId+"' class='nodeLink'><a href=''> Lookup</a></div></div></div>" );
+	$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>Approved</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>4</div><div id='"+nodeLinkId+"' class='nodeLink'><a href='/appSearch?statuscode=APP_STATUS_APPROVED'> Lookup</a></div></div></div>" );
 	$('div#'+nodeId).css(	{"position":"absolute",
 							"top":(parentDivHeight/2)-$('div#'+nodeId).outerHeight()/2,
 							"left":(3*parentDivWidth/4)-$('div#'+nodeId).outerWidth()/2
@@ -144,7 +144,7 @@ console.log((3*parentDivWidth/4)-$('div#'+nodeId).outerWidth()/2);
 			paintStyle:{ 
 				strokeStyle:"#7AB02C",
 				fillStyle:"transparent",
-				radius:1,
+				radius:2,
 				lineWidth:3 
 			},				
 			connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5, alwaysRespectStubs:true } ],								                

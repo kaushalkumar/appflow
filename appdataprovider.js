@@ -4,7 +4,7 @@ var Server = require('mongodb').Server;
 var BSON = require('mongodb').BSON;
 var ObjectID = require('mongodb').ObjectID;
 
-var appNumber = null;
+var appNumber = 0;
 
 AppDataProvider = function(host, port) {
   this.db= new Db('omappdb', new Server(host, port, {safe: false}, {auto_reconnect: true}, {}), {w:1});
@@ -41,7 +41,7 @@ AppDataProvider.prototype.findAllAppData = function(callback) {
 
 //find all appstatuses and populates appnumber (if not populated earlier)
 AppDataProvider.prototype.findAllAppStatuses = function(callback) {
-	if(appNumber == null) {
+	if(appNumber == 0) {
 		this.populateAppNumberFromDB(callback);
 	}
     this.getStatusCollection(function(error, appstatuses_collection) {
@@ -172,12 +172,13 @@ AppDataProvider.prototype.saveApplication = function(applicantName, loanAmount, 
 
 //populateAppNumberFromDB
 AppDataProvider.prototype.populateAppNumberFromDB= function(callback){
+	console.log('hiiiiiii');
 	  this.db.collection('appdatas', function(error, appdatas_collection) {
 		if( error ) {
 			callback(error);
 		} else {
 			appdatas_collection.find().sort([['appnumber', -1]]).limit(1).nextObject(function(err, appWithMaxAppNumber) {
-				if(appNumber == null) {
+				if(appNumber == 0) {
 					appNumber = appWithMaxAppNumber.appnumber+1;
 				}
 			});

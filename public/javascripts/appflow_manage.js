@@ -54,7 +54,7 @@ jsPlumb.ready(function() {
 		paintStyle:{ 
 			strokeStyle:"#7AB02C",
 			fillStyle:"transparent",
-			radius:1,
+			radius:2,
 			lineWidth:3 
 		},				
 		connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5, alwaysRespectStubs:true } ],								                
@@ -72,7 +72,7 @@ jsPlumb.ready(function() {
 		paintStyle:{ 
 			strokeStyle:"#7AB02C",
 			fillStyle:"transparent",
-			radius:1,
+			radius:2,
 			lineWidth:3 
 		},				
 		connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5, alwaysRespectStubs:true } ],								                
@@ -90,7 +90,7 @@ jsPlumb.ready(function() {
 		paintStyle:{ 
 			strokeStyle:"#7AB02C",
 			fillStyle:"transparent",
-			radius:1,
+			radius:2,
 			lineWidth:3 
 		},				
 		connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5, alwaysRespectStubs:true } ],								                
