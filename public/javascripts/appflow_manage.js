@@ -205,16 +205,75 @@ jsPlumb.ready(function() {
 		console.log(jsPlumb.getDefaultScope());
 		var connections = instance.getConnections();
 		console.log(connections.length)
-		for(i=0; i<connections.length; i++) { 
+		appflowconnections = [connections.length]
+		for(i=0; i<connections.length; i++) {
 			var target = connections[i].targetId ; 
 			var source = connections[i].sourceId ;
+			var sourceanchor = null;
+			var targetanchor = null;
+			var connection = null;
 			console.log(target);
 			console.log(source);
+			if (source == connections[i].endpoints[0].anchor.elementId)
+			{
+				sourceanchor = connections[i].endpoints[0].anchor.type;
+				targetAnchor = connections[i].endpoints[1].anchor.type;
+			} else {
+				sourceanchor = connections[i].endpoints[1].anchor.type;
+				targetAnchor = connections[i].endpoints[0].anchor.type;
+			}
+			console.log(source +', '+sourceanchor)
+			console.log(target +', '+targetAnchor)
+			connection = {"sourcenode" : source, 
+								"sourceanchor" : sourceanchor, 
+								"targetnode" : target, "targetanchor" : targetAnchor};
+			appflowconnections[i] = connection;
 		}
 		console.log(connections);
 
+		var jData1 = {
+			"id" : "node6",
+			"appstatus" : "Submitted",
+			"appstatuscode" : "APP_STATUS_SUBMITTED",
+			"xPos" : "0",
+			"yPos" : "0",
+			"isStartNode" : "false",
+			"isEndNode" : "false",
+		};
+
+		var jData2 = {
+			"id" : "node6",
+			"appstatus" : "Submitted",
+			"appstatuscode" : "APP_STATUS_SUBMITTED",
+			"xPos" : "0",
+			"yPos" : "0",
+			"isStartNode" : "false",
+			"isEndNode" : "false",
+		};
+
+		var jDataArray = {"appflownodes" : [jData1, jData2], "connections" : appflowconnections};
+
+		var request = $.ajax({
+			url: "/manage",
+			async: false,
+			type: "POST",
+			data: JSON.stringify(jDataArray),
+			contentType: "application/json",
+			dataType: "json"
+		});
+
+
+		request.success(function(result) {
+		alert("Successfully saved : ");
+		console.log('khan');
+		console.log(result);
+
+		});
+
+		request.fail(function(jqXHR, textStatus) {
+			alert("Request failed: " + textStatus);
+		});
+
 	});
-
-
 });
 

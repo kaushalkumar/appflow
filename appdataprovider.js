@@ -172,7 +172,6 @@ AppDataProvider.prototype.saveApplication = function(applicantName, loanAmount, 
 
 //populateAppNumberFromDB
 AppDataProvider.prototype.populateAppNumberFromDB= function(callback){
-	console.log('hiiiiiii');
 	  this.db.collection('appdatas', function(error, appdatas_collection) {
 		if( error ) {
 			callback(error);

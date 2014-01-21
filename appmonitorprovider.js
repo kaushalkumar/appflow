@@ -62,4 +62,37 @@ AppMonitorProvider.prototype.findAllAppFlowNodes = function(req, res) {
 };*/
 	
 
+AppMonitorProvider.prototype.saveManageFlow = function(appflownodes, connections, callback) {
+	console.log("start saveManageFlow");
+	var self = this;
+    this.db.collection('appflownodes', function(error, appflownodes_collection) {
+		if( error ) callback(error)
+		else {
+			appflownodes_collection.insert(appflownodes,function(error, appflownodes_collection) {
+			if( error ) callback(error)
+			else {
+					self.saveConnections(connections, function(error, appflowconnections_collection){
+						if( error ) callback(error)
+						else callback(null, appflownodes_collection, appflowconnections_collection);
+					});
+				}
+			});
+		}
+    });
+};
+
+AppMonitorProvider.prototype.saveConnections = function(connections, callback) {
+	this.db.collection('appflowconnections', function(error, appflowconnections_collection) {
+						if( error ) callback(error)
+						else {
+							appflowconnections_collection.insert(connections,function(error, appflowconnections_collection) {
+							if( error ) callback(error)
+							else {
+									callback(null, appflowconnections_collection);
+								}
+							});
+						}
+					});
+					};
+
 exports.AppMonitorProvider = AppMonitorProvider;
