@@ -52,47 +52,37 @@ AppMonitorProvider.prototype.findAllAppFlowNodes = function(req, res) {
       }
     });
 };
-	
-	/*function(req, res) {
-    db.collection('appflownodes', function(err, collection) {
-        collection.find().toArray(function(err, items) {
-            res.send(items);
-        });
-    });
-};*/
-	
 
-AppMonitorProvider.prototype.saveManageFlow = function(appflownodes, connections, callback) {
+AppMonitorProvider.prototype.saveManageFlow = function(flows, callback) {
 	console.log("start saveManageFlow");
 	var self = this;
-    this.db.collection('appflownodes', function(error, appflownodes_collection) {
-		if( error ) callback(error)
-		else {
-			appflownodes_collection.insert(appflownodes,function(error, appflownodes_collection) {
+	this.deleteflows(function(error){
+		self.db.collection('flows', function(error, flows_collection) {
 			if( error ) callback(error)
 			else {
-					self.saveConnections(connections, function(error, appflowconnections_collection){
-						if( error ) callback(error)
-						else callback(null, appflownodes_collection, appflowconnections_collection);
+				flows_collection.insert(flows,function(error, flows_collection) {
+					if( error ) callback(error)
+					else {
+							callback(null, flows_collection);
+						}
 					});
+			}
+		});
+	});
+};
+
+AppMonitorProvider.prototype.deleteflows = function(callback) {
+	this.db.collection('flows', function(error, flows_collection) {
+		if( error ) callback(error)
+		else {
+			flows_collection.remove(function(error) {
+				if( error ) callback(error)
+				else {
+					callback(null);
 				}
 			});
 		}
-    });
+	});
 };
-
-AppMonitorProvider.prototype.saveConnections = function(connections, callback) {
-	this.db.collection('appflowconnections', function(error, appflowconnections_collection) {
-						if( error ) callback(error)
-						else {
-							appflowconnections_collection.insert(connections,function(error, appflowconnections_collection) {
-							if( error ) callback(error)
-							else {
-									callback(null, appflowconnections_collection);
-								}
-							});
-						}
-					});
-					};
 
 exports.AppMonitorProvider = AppMonitorProvider;

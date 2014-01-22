@@ -61,20 +61,9 @@ app.get('/manage', function(req, res){
   });
 });
 
-/*app.post('/manage', function(req, res){
-  console.log(req.body.id);
-  appmonitorprovider.saveManageFlow(function(error, appstatuses){
-      res.render('manage', {
-            appstatuses:appstatuses
-        });
-  });
-});*/
-
 app.post('/manage', function(req, res) {
-  console.log(req.body.appflownodes);
-  console.log(req.body.appflownodes[1].adjacencies);
-  console.log(req.body.connections);
-  appmonitorprovider.saveManageFlow(req.body.appflownodes, req.body.connections, function(error, data){
+  console.log(req.body);
+  appmonitorprovider.saveManageFlow(req.body, function(error, data){
       res.contentType('json');
       //res.send({ data: JSON.stringify({response:'json'}) });
       res.send({ data: 'mushfik'});

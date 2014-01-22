@@ -179,8 +179,7 @@ jsPlumb.ready(function() {
 	});
 
 	$("a#saveAppFlowId").click(function saveAppFlow() {
-		alert('hi');
-		var parentDiv = $("div"+"#"+containerId);
+		/*var parentDiv = $("div"+"#"+containerId);
 		$(parentDiv).css("position","relative");
 
 		var startnode = $("div#_nodeStartId");
@@ -189,9 +188,11 @@ jsPlumb.ready(function() {
 
 		var endnode = $("div#_nodeEndId");
 		var endNodeTop = $("div#_nodeStartId").css('top')
-		var endNodeLeft = $("div#_nodeStartId").css('left')
+		var endNodeLeft = $("div#_nodeStartId").css('left')*/
 
 		var nodes = $("div[id^=_nodeId]");
+		console.log('nodes.length : ' +nodes.length);
+		var jnodes = [nodes.length]
 		for (counter = 0; counter<nodes.length; counter++)
 		{
 			var node = nodes[counter];
@@ -200,20 +201,20 @@ jsPlumb.ready(function() {
 			var nodeLeft = node.style.left;
 			var nodeStatus = node.children[0].children[0].innerText;
 			var nodeStatusCode = node.children[0].children[2].children[0].children[0].value;
-			console.log(node);
+
+			jnodes[counter] = {id : nodeId, appstatus : nodeStatus, appstatuscode : nodeStatusCode, top : nodeTop, left : nodeLeft}
 		}
+		console.log('jnodes : '+jnodes)
+
 		console.log(jsPlumb.getDefaultScope());
 		var connections = instance.getConnections();
-		console.log(connections.length)
-		appflowconnections = [connections.length]
+		jconnections = [connections.length]
 		for(i=0; i<connections.length; i++) {
 			var target = connections[i].targetId ; 
 			var source = connections[i].sourceId ;
 			var sourceanchor = null;
 			var targetanchor = null;
 			var connection = null;
-			console.log(target);
-			console.log(source);
 			if (source == connections[i].endpoints[0].anchor.elementId)
 			{
 				sourceanchor = connections[i].endpoints[0].anchor.type;
@@ -222,50 +223,25 @@ jsPlumb.ready(function() {
 				sourceanchor = connections[i].endpoints[1].anchor.type;
 				targetAnchor = connections[i].endpoints[0].anchor.type;
 			}
-			console.log(source +', '+sourceanchor)
-			console.log(target +', '+targetAnchor)
-			connection = {"sourcenode" : source, 
-								"sourceanchor" : sourceanchor, 
-								"targetnode" : target, "targetanchor" : targetAnchor};
-			appflowconnections[i] = connection;
+			jconnections[i] = {sourcenode : source, sourceanchor : sourceanchor, targetnode : target, targetanchor : targetAnchor};
 		}
 		console.log(connections);
+		console.log('jconnections : '+jconnections)
 
-		var jData1 = {
-			"id" : "node6",
-			"appstatus" : "Submitted",
-			"appstatuscode" : "APP_STATUS_SUBMITTED",
-			"xPos" : "0",
-			"yPos" : "0",
-			"isStartNode" : "false",
-			"isEndNode" : "false",
-		};
-
-		var jData2 = {
-			"id" : "node6",
-			"appstatus" : "Submitted",
-			"appstatuscode" : "APP_STATUS_SUBMITTED",
-			"xPos" : "0",
-			"yPos" : "0",
-			"isStartNode" : "false",
-			"isEndNode" : "false",
-		};
-
-		var jDataArray = {"appflownodes" : [jData1, jData2], "connections" : appflowconnections};
+		var jFlows = {nodes : jnodes, connections : jconnections};
 
 		var request = $.ajax({
 			url: "/manage",
 			async: false,
 			type: "POST",
-			data: JSON.stringify(jDataArray),
+			data: JSON.stringify(jFlows),
 			contentType: "application/json",
 			dataType: "json"
 		});
 
 
 		request.success(function(result) {
-		alert("Successfully saved : ");
-		console.log('khan');
+		alert("Successfully saved...");
 		console.log(result);
 
 		});
