@@ -7,7 +7,12 @@ block content
     .jumbotron
       | This is a demo for Application flow in Origination Manager.
       br
-      #flowDiagramDivId(style='width: 1000px; height: 400px; border: 1px solid black;')
-
+      #flowDiagramDivId(style='width: 1000px; height: 500px; border: 1px solid black;')
+  div(style="visibility: hidden")#appNodesData
+    !{JSON.stringify(appflownodes)}
+  div(style="visibility: hidden")#appDatas
+    !{JSON.stringify(appdatas)}
+  div(style="visibility: hidden")#appStatuses
+    !{JSON.stringify(appstatuses)}
 block pagescript
   script(src='/javascripts/appflow_index.js')

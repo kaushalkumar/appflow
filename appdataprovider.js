@@ -4,13 +4,36 @@ var Server = require('mongodb').Server;
 var BSON = require('mongodb').BSON;
 var ObjectID = require('mongodb').ObjectID;
 
-var appNumber = 0;
-
 AppDataProvider = function(host, port) {
   this.db= new Db('omappdb', new Server(host, port, {safe: false}, {auto_reconnect: true}, {}), {w:1});
   this.db.open(function(){});
 };
 
+AppDataProvider.prototype.getCollection= function(callback) {
+  this.db.collection('appflownodes', function(error, appflownodes_collection) {
+    if( error ) callback(error);
+    else callback(null, appflownodes_collection);
+  });
+};
+
+AppDataProvider.prototype.getFlowsCollection= function(callback) {
+  this.db.collection('flows', function(error, appflownodes_collection) {
+    if( error ) callback(error);
+    else callback(null, appflownodes_collection);
+  });
+};
+
+AppDataProvider.prototype.findAll = function(callback) {
+    this.getCollection(function(error, appflownodes_collection) {
+      if( error ) callback(error)
+      else {
+        appflownodes_collection.find().toArray(function(error, results) {
+          if( error ) callback(error)
+          else callback(null, results)
+        });
+      }
+    });
+};
 
 AppDataProvider.prototype.getAppDataCollection= function(callback) {
   this.db.collection('appdatas', function(error, appdatas_collection) {
@@ -39,11 +62,8 @@ AppDataProvider.prototype.findAllAppData = function(callback) {
     });
 };
 
-//find all appstatuses and populates appnumber (if not populated earlier)
+//find all appstatuses
 AppDataProvider.prototype.findAllAppStatuses = function(callback) {
-	if(appNumber == 0) {
-		this.populateAppNumberFromDB(callback);
-	}
     this.getStatusCollection(function(error, appstatuses_collection) {
       if( error ) callback(error)
       else {
@@ -80,6 +100,42 @@ AppDataProvider.prototype.saveStatus = function(statuscode, status, callback) {
 			});
 		}
     });
+};
+
+//Stuff for finding data from all the tables
+AppDataProvider.prototype.findAppIndexPageData = function(callback) {
+	var self = this;
+	this.getStatusCollection(function(error, appstatuses_collection) {
+		if( error ) callback(error)
+		else {
+			appstatuses_collection.find().toArray(function(error, appstatuses_collection) {
+			if( error ) callback(error)
+			else {
+					self.getAppDataCollection(function(error, appdatas_collection) {
+						if( error ) callback(error)
+						else {
+							appdatas_collection.find().toArray(function(error, appdatas_collection) {
+							if( error ) callback(error)
+							else {
+									self.getFlowsCollection(function(error, appflownodes_collection) {
+										if( error ) callback(error)
+											else {
+										appflownodes_collection.find().toArray(function(error, appflownodes_collection) {
+												if( error ) callback(error)
+												else {
+													callback(null, appdatas_collection, appstatuses_collection, appflownodes_collection);
+												}
+									});
+								}
+							});
+						}
+					});
+				}
+			});
+		}
+	});
+		}
+	});
 };
 
 //findAppSearchPageData
@@ -149,40 +205,5 @@ AppDataProvider.prototype.findAppSearchPageDataByStatus = function(statuscode, c
 	});
 };
 
-//save application
-AppDataProvider.prototype.saveApplication = function(applicantName, loanAmount, statuscode, callback) {
-	var self = this;
-	var data = {"appnumber":appNumber,"applicantname":applicantName,"loanamount":loanAmount,"appstatuscode":statuscode};
-	appNumber = appNumber+1;
-	this.db.collection('appdatas', function(error, appdatas_collection) {
-		if( error ) callback(error)
-		else {
-			appdatas_collection.insert(data,function(error, appdatas_collection) {
-			if( error ) callback(error)
-			else {
-					self.findAppSearchPageDataByStatus(statuscode,function(error, appdatas, appstatuses) {
-						if( error ) callback(error)
-						else callback(null, appdatas, appstatuses);
-					});
-				}
-			});
-		}
-    });
-};
-
-//populateAppNumberFromDB
-AppDataProvider.prototype.populateAppNumberFromDB= function(callback){
-	  this.db.collection('appdatas', function(error, appdatas_collection) {
-		if( error ) {
-			callback(error);
-		} else {
-			appdatas_collection.find().sort([['appnumber', -1]]).limit(1).nextObject(function(err, appWithMaxAppNumber) {
-				if(appNumber == 0) {
-					appNumber = appWithMaxAppNumber.appnumber+1;
-				}
-			});
-		}
-	  });
-	}
 
 exports.AppDataProvider = AppDataProvider;

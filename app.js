@@ -37,17 +37,29 @@ var appdataprovider= new AppDataProvider('localhost', 27017);
 
 //Routes
 
+app.get('/fetchAppFlowData',function(req, res){
+  appdataprovider.findAppIndexPageData(function(error, appdatas, appstatuses, appflownodes){
+    if (req.method == 'GET') {
+    res.send(appdatas);
+    }
+  });
+});
+
 app.get('/', function(req, res){
-  appmonitorprovider.findAll(function(error, appflownodes){
+  appdataprovider.findAppIndexPageData(function(error, appdatas, appstatuses, appflownodes){
       res.render('index', {
+            appdatas:appdatas, 
+            appstatuses:appstatuses,
             appflownodes:appflownodes
         });
   });
 });
 
 app.get('/index', function(req, res){
-  appmonitorprovider.findAll(function(error, appflownodes){
+  appdataprovider.findAppIndexPageData(function(error, appdatas, appstatuses, appflownodes){
       res.render('index', {
+            appdatas:appdatas, 
+            appstatuses:appstatuses,
             appflownodes:appflownodes
         });
   });
@@ -61,18 +73,6 @@ app.get('/manage', function(req, res){
   });
 });
 
-app.post('/manage', function(req, res) {
-  console.log(req.body);
-  appmonitorprovider.saveManageFlow(req.body, function(error, data){
-      res.contentType('json');
-      //res.send({ data: JSON.stringify({response:'json'}) });
-      res.send({ data: 'mushfik'});
-      //res.render('manage', {
-       //     appstatuses:appstatuses
-        //});
-  });
-});
-
 app.get('/appCreate', function(req, res){
   appdataprovider.findAllAppStatuses(function(error, appstatuses){
       res.render('appCreate', {
@@ -81,34 +81,13 @@ app.get('/appCreate', function(req, res){
   });
 });
 
-//Save application
-app.post('/appCreate', function(req, res){
-  appdataprovider.saveApplication(req.param('applicantName'), req.param('loanAmount'), req.param('statuscode'), function(error, appdatas, appstatuses){
+app.get('/appSearch', function(req, res){
+  appdataprovider.findAppSearchPageData(function(error, appdatas, appstatuses){
       res.render('appSearch', {
-            statuscode:req.param('statuscode'),
             appdatas:appdatas, 
             appstatuses:appstatuses
         });
   });
-});
-
-app.get('/appSearch', function(req, res){
-  if (req.param('statuscode')==null){
-      appdataprovider.findAppSearchPageData(function(error, appdatas, appstatuses){
-      res.render('appSearch', {
-            appdatas:appdatas, 
-            appstatuses:appstatuses
-        });
-      });
-  } else {
-      appdataprovider.findAppSearchPageDataByStatus(req.param('statuscode'),function(error, appdatas, appstatuses){
-      res.render('appSearch', {
-            statuscode:req.param('statuscode'),
-            appdatas:appdatas, 
-            appstatuses:appstatuses
-        });
-      });
-  }
 });
 
 app.post('/appSearch', function(req, res){

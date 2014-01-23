@@ -1,8 +1,14 @@
 window.onload = function() {
 	highlightMenu('menu_index');
+	createStatusHashTable();
 	addStatusNodeDivs('flowDiagramDivId');
 	refreshStatusCount();
 }
+var appNodesText = $("#appNodesData").text();
+var appNodesData = JSON.parse(appNodesText);
+var appStatusData = JSON.parse($("#appStatuses").text());
+var appInfoDatas = JSON.parse($("#appDatas").text());
+var statusHash = {};
 /*
 $(document).ready(function() {
       var divs = $("div");
@@ -27,93 +33,11 @@ function plotStatusGraph() {
 	}
 }
 function addStatusNodeDivs(parentDivId) {
+	
 	var parentDiv = $("div"+"#"+parentDivId);
 	$(parentDiv).css("position","relative");
 	var parentDivHeight = $(parentDiv).height();
 	var parentDivWidth = $(parentDiv).width();
-	
-	var startId = 'startId';
-	$(parentDiv).append("<div id='"+startId+"' class='startNode'></div>" );
-	$('div#'+startId).css(	{"position":"absolute",
-							"top":(parentDivHeight/2)-$('div#'+startId).height()/2,
-							"left":"5px"
-							}
-	);
-	
-	///this will be in loop STARTS
-	var nodeId = 'node1Id';
-	var nodeGroupId = 'node1GroupId';
-	var nodeNameId = 'node1NameId';
-	var nodeFrequencyId = 'node1FrequencyId';
-	var nodeLinkId = 'node1LinkId';
-
-	$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>Submitted</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>4</div><div id='"+nodeLinkId+"' class='nodeLink'><a href='/appSearch?statuscode=APP_STATUS_SUBMITTED'> Lookup</a></div></div></div>" );
-	$('div#'+nodeId).css(	{"position":"absolute",
-							"top":(parentDivHeight/2)-$('div#'+nodeId).outerHeight()/2,
-							"left":(parentDivWidth/4)-$('div#'+nodeId).outerWidth()/2
-							}
-	);
-console.log((parentDivHeight/2)-$('div#'+nodeId).outerHeight()/2);
-console.log((parentDivWidth/4)-$('div#'+nodeId).outerWidth()/2);
-
-	nodeId = 'node2Id';
-	nodeGroupId = 'node2GroupId';
-	nodeNameId = 'node2NameId';
-	nodeFrequencyId = 'node2FrequencyId';
-	nodeLinkId = 'node2LinkId';
-
-	$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>Offer</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>4</div><div id='"+nodeLinkId+"' class='nodeLink'><a href='/appSearch?statuscode=APP_STATUS_OFFERCREATED'> Lookup</a></div></div></div>" );
-	$('div#'+nodeId).css(	{"position":"absolute",
-							"top":(parentDivHeight/3)-$('div#'+nodeId).outerHeight()/2,
-							"left":(parentDivWidth/2)-$('div#'+nodeId).outerWidth()/2
-							}
-	);
-
-console.log((parentDivHeight/3)-$('div#'+nodeId).outerHeight()/2);
-console.log((parentDivWidth/2)-$('div#'+nodeId).outerWidth()/2);
-
-	nodeId = 'node3Id';
-	nodeGroupId = 'node3GroupId';
-	nodeNameId = 'node3NameId';
-	nodeFrequencyId = 'node3FrequencyId';
-	nodeLinkId = 'node3LinkId';
-
-	$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>Counter Offer</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>4</div><div id='"+nodeLinkId+"' class='nodeLink'><a href='/appSearch?statuscode=APP_STATUS_CTROFFERCREATED'> Lookup</a></div></div></div>" );
-	$('div#'+nodeId).css(	{"position":"absolute",
-							"top":(2*parentDivHeight/3)-$('div#'+nodeId).outerHeight()/2,
-							"left":(parentDivWidth/2)-$('div#'+nodeId).outerWidth()/2
-							}
-	);
-
-console.log((2*parentDivHeight/3)-$('div#'+nodeId).outerHeight()/2);
-console.log((parentDivWidth/2)-$('div#'+nodeId).outerWidth()/2);
-
-
-	nodeId = 'node4Id';
-	nodeGroupId = 'node4GroupId';
-	nodeNameId = 'node4NameId';
-	nodeFrequencyId = 'node4FrequencyId';
-	nodeLinkId = 'node4LinkId';
-
-	$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>Approved</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>4</div><div id='"+nodeLinkId+"' class='nodeLink'><a href='/appSearch?statuscode=APP_STATUS_APPROVED'> Lookup</a></div></div></div>" );
-	$('div#'+nodeId).css(	{"position":"absolute",
-							"top":(parentDivHeight/2)-$('div#'+nodeId).outerHeight()/2,
-							"left":(3*parentDivWidth/4)-$('div#'+nodeId).outerWidth()/2
-							}
-	);
-
-console.log((parentDivHeight/2)-$('div#'+nodeId).outerHeight()/2);
-console.log((3*parentDivWidth/4)-$('div#'+nodeId).outerWidth()/2);
-
-	///this will be in loop ENDS
-
-	var endId = 'endId';
-	$(parentDiv).append("<div id='"+endId+"' class='endNode'></div>" );
-	$('div#'+endId).css(	{"position":"absolute",
-							"top":(parentDivHeight/2)-$('div#'+startId).height()/2,
-							"right":"5px"
-							}
-	);
 
 	//connect divs STARTS
 	jsPlumb.bind("ready", function() {
@@ -144,7 +68,7 @@ console.log((3*parentDivWidth/4)-$('div#'+nodeId).outerWidth()/2);
 			paintStyle:{ 
 				strokeStyle:"#7AB02C",
 				fillStyle:"transparent",
-				radius:2,
+				radius:1,
 				lineWidth:3 
 			},				
 			connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5, alwaysRespectStubs:true } ],								                
@@ -161,26 +85,69 @@ console.log((3*parentDivWidth/4)-$('div#'+nodeId).outerWidth()/2);
 				}
 		};
 
-		_addEndpoints("startId",["RightMiddle"]);
-		_addEndpoints("endId",["LeftMiddle"]);
-		_addEndpoints("node1Id", ["TopCenter", "BottomCenter","LeftMiddle", "RightMiddle"]);			
-		_addEndpoints("node2Id", ["LeftMiddle", "BottomCenter","TopCenter", "RightMiddle"]);
-		_addEndpoints("node3Id", ["RightMiddle", "BottomCenter","LeftMiddle", "TopCenter"]);
-		_addEndpoints("node4Id", ["LeftMiddle", "RightMiddle","TopCenter", "BottomCenter"]);
+		var _connect = function(_source, _target, _sourceAnchor, _targetAnchor){
+			jsPlumb.connect({
+					source:_source,
+					target:_target,
+					anchor:[_sourceAnchor, _targetAnchor],
+					endpoint:"Dot",
+					paintStyle:{ 
+						strokeStyle:"#7AB02C",
+						fillStyle:"transparent",
+						radius:1,
+						lineWidth:3 
+					},				
+					connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5, alwaysRespectStubs:true } ],								                
+					connectorStyle:connectorPaintStyle,
+					hoverPaintStyle:endpointHoverStyle,
+					connectorHoverStyle:connectorHoverStyle,
+					overlays:[["Arrow",{location:-1}]],
+					dragOptions:{}
+				});
+		}
 
-		jsPlumb.connect({uuids:["startIdRightMiddle", "node1IdLeftMiddle"], overlays:[["Arrow",{location:0.99}]]});
-		jsPlumb.connect({uuids:["node1IdRightMiddle", "node2IdLeftMiddle"], overlays:[["Arrow",{location:0.99}]]});
-		jsPlumb.connect({uuids:["node2IdRightMiddle", "node4IdLeftMiddle"], overlays:[["Arrow",{location:0.99}]]});
-		jsPlumb.connect({uuids:["node4IdBottomCenter", "node3IdRightMiddle"], overlays:[["Arrow",{location:0.99}]]});
-		jsPlumb.connect({uuids:["node3IdLeftMiddle", "node1IdBottomCenter"], overlays:[["Arrow",{location:0.99}]]});
-		jsPlumb.connect({uuids:["node4IdRightMiddle", "endIdLeftMiddle"], overlays:[["Arrow",{location:0.99}]]});
+		var startId = '_nodeStartId';
+		$(parentDiv).append("<div id='"+startId+"' class='startNode'></div>" );
+		$('div#'+startId).css(	{"position":"absolute",
+								"top":(parentDivHeight/2)-$('div#'+startId).height()/2,
+								"left":"5px"
+								}
+		);
+		
+		///this will be in loop STARTS
 
-		/*jsPlumb.connect({ source:"startId", target:"node1Id", anchors:["Right", "Left"], connector:[ "Flowchart"],  endpoints:["Dot","Dot"] });
-		jsPlumb.connect({ source:"node1Id", target:"node2Id", anchors:["Right", "Left"], connector:[ "Flowchart"],  endpoints:["Dot","Dot"] });
-		jsPlumb.connect({ source:"node1Id", target:"node3Id", anchors:["Right", "Left"], connector:[ "Flowchart"],  endpoints:["Dot","Dot"] });
-		jsPlumb.connect({ source:"node2Id", target:"node4Id", anchors:["Right", "Left"], connector:[ "Flowchart"],  endpoints:["Dot","Dot"] });
-		jsPlumb.connect({ source:"node3Id", target:"node4Id", anchors:["Right", "Left"], connector:[ "Flowchart"],  endpoints:["Dot","Dot"] });
-		jsPlumb.connect({ source:"node4Id", target:"endId", anchors:["Right", "Left"], connector:[ "Flowchart"],  endpoints:["Dot","Dot"] });*/
+	    for(var i=0;i<appNodesData[0].nodes.length;i++){
+	    	var j = i+1
+	    	var nodeId = '_nodeId'+j;
+	    	var nodeGroupId = 'node'+j+'GroupId';
+	    	var nodeNameId = 'node'+j+'NameId';
+	    	var nodeFrequencyId = 'node'+j+'FrequencyId';
+	    	var nodeLinkId = 'node'+j+'LinkId';
+	    	var nodeStatusCD = appNodesData[0].nodes[i].appstatuscode;
+	    	$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>"+appNodesData[0].nodes[i].appstatus+"</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>NaN</div><div id='"+nodeLinkId+"' class='nodeLink'><a href='/appSearch?statuscode='" + nodeStatusCD + "'> Lookup</a></div></div></div>" );
+			
+			$('div#'+nodeId).css(	{"position":"absolute",
+									"top":(appNodesData[0].nodes[i].top)-$('div#'+nodeId).outerHeight()/2,
+									"left":(appNodesData[0].nodes[i].left)-$('div#'+nodeId).outerWidth()/2
+									}
+			);
+			_addEndpoints('_nodeId'+j, ["TopCenter", "BottomCenter","LeftMiddle", "RightMiddle"]);
+	    }
+
+	    var endId = '_nodeEndId';
+		$(parentDiv).append("<div id='"+endId+"' class='endNode'></div>" );
+		$('div#'+endId).css(	{"position":"absolute",
+								"top":(parentDivHeight/2)-$('div#'+startId).height()/2,
+								"right":"5px"
+								}
+		);
+
+		_addEndpoints("_nodeStartId",["TopCenter", "BottomCenter","LeftMiddle", "RightMiddle"]);
+		_addEndpoints("_nodeEndId",["TopCenter", "BottomCenter","LeftMiddle", "RightMiddle"]);
+
+		for(var i=0;i<appNodesData[0].connections.length;i++){
+			_connect(appNodesData[0].connections[i].sourcenode,appNodesData[0].connections[i].targetnode,appNodesData[0].connections[i].sourceanchor,appNodesData[0].connections[i].targetanchor);
+		}
      });
 	//connect divs ENDS
 
@@ -197,11 +164,32 @@ console.log((3*parentDivWidth/4)-$('div#'+nodeId).outerWidth()/2);
 	*/
 //	}
 }
-var counter = 888888888;
+
+function createStatusHashTable(){
+	for (var i=0;i<appStatusData.length;i++){
+		statusHash[appStatusData[i].appstatuscode] = 0;
+	}
+}
+
 function refreshStatusCount(){
 	setTimeout( function () {
-		counter = counter+1;
-		$('#node1FrequencyId').fadeOut('slow').text(counter).fadeIn('slow');
+		createStatusHashTable();
+		$.ajax({
+			type:'get',
+			dataType: "json",
+			url:'/fetchAppFlowData',
+			success : function(data) {
+				appInfoDatas = data;
+			}
+		})
+		
+		for(var i=0;i<appInfoDatas.length;i++){
+			statusHash[appInfoDatas[i].appstatuscode]++;
+		}
+		for(var i = 0;i<appNodesData.length;i++){
+			var j = i+1;
+			$('#node'+j+'FrequencyId').fadeOut('slow').text(statusHash[appNodesData[0].nodes[i].appstatuscode]).fadeIn('slow');
+		}
 		refreshStatusCount();
 	}, 2000);
 }
