@@ -55,3 +55,12 @@ div.nodeLink{
     float:right;
     text-align:center;
 }
+span.nodeRemove {
+    position: absolute;
+    left: 92%;
+    top: 0%;
+	cursor: pointer;
+}
+.nodeRemoveHover {
+	color:red;
+}

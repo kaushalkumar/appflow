@@ -9,6 +9,9 @@ window.onload = function() {
 function plotStatusGraph() {
 
 }
+
+
+
 jsPlumb.ready(function() {
 	var containerId = "flowDiagramDivId";
 	var instance = jsPlumb.getInstance({
@@ -49,7 +52,7 @@ jsPlumb.ready(function() {
 	var anchorpoint = {
 		isTarget:true,
 		isSource:true,
-		maxConnections:-1,
+		maxConnections:1,
 		endpoint:"Dot",
 		paintStyle:{ 
 			strokeStyle:"#7AB02C",
@@ -158,21 +161,32 @@ jsPlumb.ready(function() {
 
 		var appstatus = $('select[name="statuscode"]').find('option:selected').text();
 		var appstatuscode = $('select[name="statuscode"]').find('option:selected').val();
-
 		lastNodeNumber = lastNodeNumber+1;
 		var nodeId = '_nodeId'+lastNodeNumber;
+		var nodeDeleteAnchorId = '_nodeDeleteAnchorId'+lastNodeNumber;
 		var nodeGroupId = '_nodeGroupId'+lastNodeNumber;
 		var nodeNameId = '_nodeNameId'+lastNodeNumber;
 		var nodeCodeId = '_nodeCodeId'+lastNodeNumber;
 		var nodeFrequencyId = '_nodeFrequencyId'+lastNodeNumber;
 		var nodeLinkId = '_nodeLinkId'+lastNodeNumber;
 		
-		$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>"+appstatus+"</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>4</div><div id='"+nodeLinkId+"' class='nodeLink'><a href=''><input type='hidden' id='"+nodeCodeId+"' value='"+appstatuscode+"'/>Lookup</a></div></div></div>" );
+		$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeDeleteAnchorId+"' href='#'> <span class='glyphicon glyphicon-remove-circle nodeRemove'/> </div><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>"+appstatus+"</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>4</div><div id='"+nodeLinkId+"' class='nodeLink'><a href=''><input type='hidden' id='"+nodeCodeId+"' value='"+appstatuscode+"'/>Lookup</a></div></div></div>" );
 		$('div#'+nodeId).css(	{"position":"absolute",
 								"top":0,
 								"left":0
 								}
 		);
+		$("div#"+nodeDeleteAnchorId).click(function removeNode() {
+			 var nodeIDToBeDeleted = $("div#"+this.id).parent().attr('id');
+			 instance.remove(nodeIDToBeDeleted);
+		});
+		
+		$("div#"+nodeDeleteAnchorId).mouseover(function () {
+			 $(this).children().addClass('nodeRemoveHover'); 
+		});
+		$("div#"+nodeDeleteAnchorId).mouseout(function () {
+			 $(this).children().removeClass('nodeRemoveHover'); 
+		});
 		//make node draggable
 		instance.draggable($("#"+nodeId), { containment:"parent" });
 		_addAnchorpoints(nodeId, ["TopCenter", "BottomCenter", "LeftMiddle", "RightMiddle"]);
@@ -199,8 +213,8 @@ jsPlumb.ready(function() {
 			var nodeId = node.id;
 			var nodeTop = node.style.top;
 			var nodeLeft = node.style.left;
-			var nodeStatus = node.children[0].children[0].innerText;
-			var nodeStatusCode = node.children[0].children[2].children[0].children[0].value;
+			var nodeStatus = node.children[1].children[0].innerText;
+			var nodeStatusCode = node.children[1].children[2].children[0].children[0].value;
 
 			jnodes[counter] = {id : nodeId, appstatus : nodeStatus, appstatuscode : nodeStatusCode, top : nodeTop, left : nodeLeft}
 		}
@@ -242,8 +256,8 @@ jsPlumb.ready(function() {
 
 		request.success(function(result) {
 		alert("Successfully saved...");
-		console.log(result);
-
+			console.log(result);
+			
 		});
 
 		request.fail(function(jqXHR, textStatus) {
