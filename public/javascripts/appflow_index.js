@@ -124,11 +124,13 @@ function addStatusNodeDivs(parentDivId) {
 	    	var nodeFrequencyId = 'node'+j+'FrequencyId';
 	    	var nodeLinkId = 'node'+j+'LinkId';
 	    	var nodeStatusCD = appNodesData[0].nodes[i].appstatuscode;
-	    	$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>"+appNodesData[0].nodes[i].appstatus+"</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>NaN</div><div id='"+nodeLinkId+"' class='nodeLink'><a href='/appSearch?statuscode='" + nodeStatusCD + "'> Lookup</a></div></div></div>" );
+	    	$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>"+appNodesData[0].nodes[i].appstatus+"</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>0</div><div id='"+nodeLinkId+"' class='nodeLink'><a href='/appSearch?statuscode='" + nodeStatusCD + "'> Lookup</a></div></div></div>" );
 			
+			var yAxis = appNodesData[0].nodes[i].top.replace("px","");
+			var xAxis = appNodesData[0].nodes[i].left.replace("px","");
 			$('div#'+nodeId).css(	{"position":"absolute",
-									"top":(appNodesData[0].nodes[i].top)-$('div#'+nodeId).outerHeight()/2,
-									"left":(appNodesData[0].nodes[i].left)-$('div#'+nodeId).outerWidth()/2
+									"top":(yAxis)-$('div#'+nodeId).outerHeight()/2,
+									"left":(xAxis)-$('div#'+nodeId).outerWidth()/2
 									}
 			);
 			_addEndpoints('_nodeId'+j, ["TopCenter", "BottomCenter","LeftMiddle", "RightMiddle"]);
