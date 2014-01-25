@@ -171,14 +171,17 @@ function createStatusHashTable(){
 function refreshStatusCount(){
 	setTimeout( function () {
 		createStatusHashTable();
+		var _url = '/fetchAppFlowData';
+		_url = _url + "?random=" + Math.random();
 		$.ajax({
 			type:'get',
 			dataType: "json",
-			url:'/fetchAppFlowData',
+			url:_url,
 			success : function(data) {
 				appInfoDatas = data;
+				console.log(appInfoDatas);
 			}
-		})
+		});
 		
 		for(var i=0;i<appInfoDatas.length;i++){
 			statusHash[appInfoDatas[i].appstatuscode]++;
