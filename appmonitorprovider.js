@@ -52,6 +52,40 @@ AppMonitorProvider.prototype.findAllAppFlowNodes = function(req, res) {
       }
     });
 };
+
+
+AppMonitorProvider.prototype.saveManageFlow = function(flows, callback) {
+	console.log("start saveManageFlow");
+	var self = this;
+	this.deleteflows(function(error){
+		self.db.collection('flows', function(error, flows_collection) {
+			if( error ) callback(error)
+			else {
+				flows_collection.insert(flows,function(error, flows_collection) {
+					if( error ) callback(error)
+					else {
+							callback(null, flows_collection);
+						}
+					});
+			}
+		});
+	});
+};
+
+AppMonitorProvider.prototype.deleteflows = function(callback) {
+	this.db.collection('flows', function(error, flows_collection) {
+		if( error ) callback(error)
+		else {
+			flows_collection.remove(function(error) {
+				if( error ) callback(error)
+				else {
+					callback(null);
+				}
+			});
+		}
+	});
+};
+
 	
 	/*function(req, res) {
     db.collection('appflownodes', function(err, collection) {
