@@ -17,91 +17,98 @@ $(document).ready(function() {
 	  }
 });
 */
-function plotStatusGraph() {
-	var divs = $("div");
-	for( i=0; i<divs.length; i++ ){
-	 alert("Found div: " + divs[i].innerHTML);
-	 /*
-	 <div id="node1Id" class="node">
-		<div id="node1GroupId" class="nodeGroup">
-			<div id="node1NameId" class="nodeName">StarAAAAAAAA Atttt tttttt ggggfffffffffffff ffffffffff ffffffffffffff</div>
-			<div id="node1FrequencyId" class="nodeFrequency">4</div>
-			<div id="node1LinkId" class="nodeLink"><a href=""> Lookup</a></div>
-		</div>
-	</div>
-	*/
-	}
-}
+
 function addStatusNodeDivs(parentDivId) {
 	
 	var parentDiv = $("div"+"#"+parentDivId);
 	$(parentDiv).css("position","relative");
 	var parentDivHeight = $(parentDiv).height();
 	var parentDivWidth = $(parentDiv).width();
+	
+	var containerId = "flowDiagramDivId";
 
+	var instance = jsPlumb.getInstance({
+	// the overlays to decorate each connection with.  note that the label overlay uses a function to generate the label text; in this
+	// case it returns the 'labelText' member that we set on each connection in the 'init' method below.
+	ConnectionOverlays : [
+		[ "Arrow", { location:0.99, width:10, length:7 } ],
+		[ "Label", { 
+			location:0.1,
+			id:"label",
+			cssClass:"aLabel"
+		}]
+	],
+	Container:containerId
+	});	
 	//connect divs STARTS
-	jsPlumb.bind("ready", function() {
+	instance.bind("ready", function() {
 
 		// this is the paint style for the connecting lines..		
-		var connectorPaintStyle = {
-		lineWidth:4,
+		var _connectorPaintStyle = {
+		lineWidth:3,
 		strokeStyle:"#61B7CF",
 		joinstyle:"round",
 		outlineColor:"white",
-		outlineWidth:2
+		outlineWidth:1
 		};
 		// .. and this is the hover style. 
-		var connectorHoverStyle = {
-			lineWidth:4,
+		var _connectorHoverStyle = {
+			lineWidth:3,
+			radius:2,
 			strokeStyle:"#216477",
-			outlineWidth:2,
+			outlineWidth:1,
 			outlineColor:"white"
 		};
-		var endpointHoverStyle = {
+		var _endpointHoverStyle = {
 			fillStyle:"#216477",
+			radius:2,
 			strokeStyle:"#216477"
 		};
-		// the definition of source endpoints (the small blue ones)
-
-		var endpoint = {
-			endpoint:"Dot",
-			paintStyle:{ 
+		
+		var _endpointStyle = { 
+			strokeStyle:"#7AB02C",
+			fillStyle:"transparent",
+			radius:2
+		}
+		
+		var _paintStyle = { 
 				strokeStyle:"#7AB02C",
 				fillStyle:"transparent",
 				radius:1,
 				lineWidth:3 
-			},				
-			connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5, alwaysRespectStubs:true } ],								                
-			connectorStyle:connectorPaintStyle,
-			hoverPaintStyle:endpointHoverStyle,
-			connectorHoverStyle:connectorHoverStyle,
+		}
+
+		var _connector = [ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5, alwaysRespectStubs:true } ];
+
+		var endpoint = {
+			endpoint:"Dot",
+			paintStyle:_paintStyle,				
+			connector:_connector,								                
+			connectorStyle:_connectorPaintStyle,
+			hoverPaintStyle:_endpointHoverStyle,
+			connectorHoverStyle:_connectorHoverStyle,
 			dragOptions:{}
 		};
 		
 		var _addEndpoints = function(toId, ancArr){
 			for (var i = 0; i < ancArr.length; i++) {
 					var sourceUUID = toId + ancArr[i];
-					jsPlumb.addEndpoint(toId, endpoint, { anchor:ancArr[i], uuid:sourceUUID});						
+					instance.addEndpoint(toId, endpoint, { anchor:ancArr[i], uuid:sourceUUID});						
 				}
 		};
 
 		var _connect = function(_source, _target, _sourceAnchor, _targetAnchor){
-			jsPlumb.connect({
+			instance.connect({
 					source:_source,
 					target:_target,
 					anchor:[_sourceAnchor, _targetAnchor],
 					endpoint:"Dot",
-					paintStyle:{ 
-						strokeStyle:"#7AB02C",
-						fillStyle:"transparent",
-						radius:1,
-						lineWidth:3 
-					},				
-					connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5, alwaysRespectStubs:true } ],								                
-					connectorStyle:connectorPaintStyle,
-					hoverPaintStyle:endpointHoverStyle,
-					connectorHoverStyle:connectorHoverStyle,
-					overlays:[["Arrow",{location:-1}]],
+					endpointStyle:_endpointStyle,
+					paintStyle:_paintStyle,				
+					connector:_connector,								                
+					connectorStyle:_connectorPaintStyle,
+					hoverPaintStyle:_endpointHoverStyle,
+					connectorHoverStyle:_connectorHoverStyle,
 					dragOptions:{}
 				});
 		}
@@ -153,18 +160,6 @@ function addStatusNodeDivs(parentDivId) {
      });
 	//connect divs ENDS
 
-//	for( i=0; i<divs.length; i++ ){
-//	 alert("Found div: " + divs[i].innerHTML);
-	 /*
-	 <div id="node1Id" class="node">
-		<div id="node1GroupId" class="nodeGroup">
-			<div id="node1NameId" class="nodeName">StarAAAAAAAA Atttt tttttt ggggfffffffffffff ffffffffff ffffffffffffff</div>
-			<div id="node1FrequencyId" class="nodeFrequency">4</div>
-			<div id="node1LinkId" class="nodeLink"><a href=""> Lookup</a></div>
-		</div>
-	</div>
-	*/
-//	}
 }
 
 function createStatusHashTable(){
