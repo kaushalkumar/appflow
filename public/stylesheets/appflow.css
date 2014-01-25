@@ -64,3 +64,9 @@ span.nodeRemove {
 .nodeRemoveHover {
 	color:red;
 }
+.actionLabel{
+	width:50%;
+}
+.actionCommand{
+	width:50%;
+}

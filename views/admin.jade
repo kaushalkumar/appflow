@@ -1,0 +1,19 @@
+extends layout
+
+block content
+  .container
+    h4
+      b Application flow diagram - Demo
+    .jumbotron
+      | Adminnistation page for demo - Setup data, trigger application creation etc.
+      br
+      br
+      table.table.table-striped.table-bordered
+        tr
+          td.actionLabel 
+            b Auto Create/Update/Delete Applicant
+          td.actionCommand
+            button.btn.btn-default#startPauseButtonId(type="button" onclick="autoAppCrUpDl()") Start
+      br
+block pagescript
+  script(src='/javascripts/appflow_admin.js')
