@@ -1,14 +1,11 @@
 window.onload = function() {
 	highlightMenu('menu_index');
-	createStatusHashTable();
 	addStatusNodeDivs('flowDiagramDivId');
 	refreshStatusCount();
 }
 var appNodesText = $("#appNodesData").text();
 var appNodesData = JSON.parse(appNodesText);
 var appStatusData = JSON.parse($("#appStatuses").text());
-var appInfoDatas = JSON.parse($("#appDatas").text());
-var statusHash = {};
 /*
 $(document).ready(function() {
       var divs = $("div");
@@ -125,12 +122,12 @@ function addStatusNodeDivs(parentDivId) {
 
 	    for(var i=0;i<appNodesData[0].nodes.length;i++){
 	    	var j = i+1
-	    	var nodeId = '_nodeId'+j;
-	    	var nodeGroupId = 'node'+j+'GroupId';
-	    	var nodeNameId = 'node'+j+'NameId';
-	    	var nodeFrequencyId = 'node'+j+'FrequencyId';
-	    	var nodeLinkId = 'node'+j+'LinkId';
 	    	var nodeStatusCD = appNodesData[0].nodes[i].appstatuscode;
+			var nodeId = '_nodeId'+j;
+	    	var nodeGroupId = 'nodeGroupId'+j;
+	    	var nodeNameId = 'nodeNameId'+j;
+	    	var nodeFrequencyId = 'nodeFrequencyId_' + nodeStatusCD + '_' + j;
+	    	var nodeLinkId = 'nodeLinkId'+j;
 	    	$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>"+appNodesData[0].nodes[i].appstatus+"</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>0</div><div id='"+nodeLinkId+"' class='nodeLink'><a href='/appSearch?statuscode='" + nodeStatusCD + "'> Lookup</a></div></div></div>" );
 			
 			var yAxis = appNodesData[0].nodes[i].top.replace("px","");
@@ -162,16 +159,11 @@ function addStatusNodeDivs(parentDivId) {
 
 }
 
-function createStatusHashTable(){
-	for (var i=0;i<appStatusData.length;i++){
-		statusHash[appStatusData[i].appstatuscode] = 0;
-	}
-}
-
 function refreshStatusCount(){
 	setTimeout( function () {
-		createStatusHashTable();
-		var _url = '/fetchAppFlowData';
+		var statusHash = {};
+		var appInfoDatas = {};
+		var _url = '/fetchNodeFrequencyData';
 		_url = _url + "?random=" + Math.random();
 		$.ajax({
 			type:'get',
@@ -179,17 +171,17 @@ function refreshStatusCount(){
 			url:_url,
 			success : function(data) {
 				appInfoDatas = data;
-				console.log(appInfoDatas);
+				for(var i=0;i<appInfoDatas.length;i++){
+					statusHash[appInfoDatas[i].appstatuscode] = appInfoDatas[i].count;
+				}
+
+				$('div[id^="nodeFrequencyId_"]').each(function(){
+					var id = this.id;
+					var appstatusCD = id.substring(id.indexOf("_")+1, id.lastIndexOf("_"));
+					$("#"+id).fadeOut('slow').text(statusHash[appstatusCD]).fadeIn('slow');
+				});
 			}
 		});
-		
-		for(var i=0;i<appInfoDatas.length;i++){
-			statusHash[appInfoDatas[i].appstatuscode]++;
-		}
-		for(var i = 0;i<appNodesData.length;i++){
-			var j = i+1;
-			$('#node'+j+'FrequencyId').fadeOut('slow').text(statusHash[appNodesData[0].nodes[i].appstatuscode]).fadeIn('slow');
-		}
 		refreshStatusCount();
 	}, 2000);
 }

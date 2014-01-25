@@ -138,6 +138,16 @@ AppDataProvider.prototype.findAppIndexPageData = function(callback) {
 	});
 };
 
+//Get application status and its count
+AppDataProvider.prototype.fetchNodeFrequencyData = function(callback) {
+  this.db.collection('appdatas').group(['appstatuscode'], {}, {"count":0}, "function (obj, prev) { prev.count++; }", function(error, appdata_frequency) {
+      if( error ) callback(error)
+      else {
+		callback(null, appdata_frequency)
+        }});
+};
+	
+	
 //findAppSearchPageData
 AppDataProvider.prototype.findAppSearchPageData = function(callback) {
 	var self = this;

@@ -37,10 +37,10 @@ var appdataprovider= new AppDataProvider('localhost', 27017);
 
 //Routes
 
-app.get('/fetchAppFlowData',function(req, res){
-  appdataprovider.findAppIndexPageData(function(error, appdatas, appstatuses, appflownodes){
+app.get('/fetchNodeFrequencyData',function(req, res){
+  appdataprovider.fetchNodeFrequencyData(function(error, appdataFeq){
     if (req.method == 'GET') {
-    res.send(appdatas);
+		res.send(appdataFeq);
     }
   });
 });
