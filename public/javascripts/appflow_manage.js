@@ -20,7 +20,7 @@ jsPlumb.ready(function() {
 	// the overlays to decorate each connection with.  note that the label overlay uses a function to generate the label text; in this
 	// case it returns the 'labelText' member that we set on each connection in the 'init' method below.
 	ConnectionOverlays : [
-		[ "Arrow", { location:0.99, width:10, length:7 } ],
+		[ "Arrow", { location:-1, width:10, length:7 } ],
 		[ "Label", { 
 			location:0.1,
 			id:"label",
@@ -96,7 +96,7 @@ jsPlumb.ready(function() {
 			radius:1,
 			lineWidth:3 
 		},				
-		connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5, alwaysRespectStubs:true } ],								                
+		connector:[ "Flowchart", { stub:[40, 60], gap:5, cornerRadius:5, alwaysRespectStubs:true } ],								                
 		connectorStyle:connectorPaintStyle,
 		hoverPaintStyle:endpointHoverStyle,
 		connectorHoverStyle:connectorHoverStyle,
@@ -264,6 +264,17 @@ jsPlumb.ready(function() {
 			alert("Request failed: " + textStatus);
 		});
 
+	});
+
+	// bind click listener; delete connections on click			
+	instance.bind("click", function(conn) {
+		instance.detach(conn);
+	});
+	
+	// bind beforeDetach interceptor: will be fired when the click handler above calls detach, and the user
+	// will be prompted to confirm deletion.
+	instance.bind("beforeDetach", function(conn) {
+		return confirm("Delete connection?");
 	});
 });
 
