@@ -105,6 +105,30 @@ app.post('/appCreate', function(req, res){
   });
 });
 
+//Persist application
+app.post('/appPersist', function(req, res){
+  appdataprovider.persistApplication(req.param('applicantName'), req.param('loanAmount'), req.param('statuscode'), function(error, msg){
+      if(error) {}
+	  else res.send(msg);
+  });
+});
+
+//Update application
+app.post('/appUpdate', function(req, res){
+  appdataprovider.updateApplication(req.param('_id'), req.param('appNumber'), req.param('applicantName'), req.param('loanAmount'), req.param('statuscode'), function(error, msg){
+      if(error) {}
+	  else res.send(msg);
+  });
+});
+
+//Delete application
+app.post('/appDelete', function(req, res){
+  appdataprovider.deleteApplication(req.param('_id'), function(error, msg){
+      if(error) {}
+	  else res.send(msg);
+  });
+});
+
 
 app.get('/appSearch', function(req, res){
  if (req.param('statuscode')==null){
@@ -141,6 +165,20 @@ app.get('/manageStatus', function(req, res){
       res.render('manageStatus', {
             appstatuses:appstatuses
         });
+  });
+});
+
+app.get('/getStatuses', function(req, res){
+  appdataprovider.findAllAppStatuses(function(error, appstatuses){
+      if(error) {}
+	  else res.send(appstatuses);
+  });
+});
+
+app.get('/getAppDatas', function(req, res){
+  appdataprovider.findAllAppData(function(error, appdatas){
+      if(error) {}
+	  else res.send(appdatas);
   });
 });
 

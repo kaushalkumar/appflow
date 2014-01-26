@@ -202,6 +202,65 @@ AppDataProvider.prototype.saveApplication = function(applicantName, loanAmount, 
     });
 };
 
+//persist application
+AppDataProvider.prototype.persistApplication = function(applicantName, loanAmount, statuscode, callback) {
+	var self = this;
+	var data = {"appnumber":appNumber,"applicantname":applicantName,"loanamount":loanAmount,"appstatuscode":statuscode};
+	console.log(data);
+	appNumber = appNumber+1;
+	this.db.collection('appdatas', function(error, appdatas_collection) {
+		if( error ) callback(error)
+		else {
+			appdatas_collection.insert(data,function(error, appNumber) {
+			if( error ) callback(error)
+			else {
+				msg = "Application {" + applicantName + ", " + loanAmount + ", " + statuscode + "} created successfully";
+				callback(null, msg);
+				}
+			});
+		}
+    });
+};
+
+// update application
+AppDataProvider.prototype.updateApplication = function(appGUID, appNumber, applicantName, loanAmount, statuscode, callback) {
+	appNumber = appNumber*1//to preserve the integrity of number
+	var data = {"appnumber":appNumber,"applicantname":applicantName,"loanamount":loanAmount,"appstatuscode":statuscode};
+    this.db.collection('appdatas', function(error, appdatas_collection) {
+      if( error ) callback(error);
+      else {
+        appdatas_collection.update(
+			{_id: appdatas_collection.db.bson_serializer.ObjectID.createFromHexString(appGUID)},
+			data,
+			function(error, data) {
+					if(error) callback(error);
+					else {
+						msg = "Application {" + applicantName + ", " + loanAmount + ", " + statuscode + "} updated successfully";
+						callback(null, msg);
+					}
+			}
+		);
+      }
+    });
+};
+
+//delete application
+AppDataProvider.prototype.deleteApplication = function(appGUID, callback) {
+        this.db.collection('appdatas', function(error, appdatas_collection) {
+                if(error) callback(error);
+                else {
+                        appdatas_collection.remove(
+                                {_id: appdatas_collection.db.bson_serializer.ObjectID.createFromHexString(appGUID)},
+                                function(error, employee){
+                                        if(error) callback(error);
+                                        else {
+											msg = "Application {" + appGUID + "} deleted successfully";
+											callback(null, msg);
+										}
+                                });
+                        }
+        });
+};
 //populateAppNumberFromDB
 AppDataProvider.prototype.populateAppNumberFromDB= function(callback){
 	  this.db.collection('appdatas', function(error, appdatas_collection) {
