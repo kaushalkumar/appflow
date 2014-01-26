@@ -403,5 +403,29 @@ AppDataProvider.prototype.findAppSearchPageDataByStatus = function(statuscode, c
 	});
 };
 
+AppDataProvider.prototype.findManageFlowPageData = function(callback) {
+	var self = this;
+	this.getStatusCollection(function(error, appstatuses_collection) {
+		if( error ) callback(error)
+		else {
+			appstatuses_collection.find().toArray(function(error, appstatuses_collection) {
+			if( error ) callback(error)
+			else {
+					self.getFlowsCollection(function(error, appflownodes_collection) {
+						if( error ) callback(error)
+						else {
+							appflownodes_collection.find().toArray(function(error, appflownodes_collection) {
+							if( error ) callback(error)
+							else {
+								callback(null, appstatuses_collection, appflownodes_collection);
+							}
+					});
+				}
+			});
+		}
+	});
+		}
+	});
+};
 
 exports.AppDataProvider = AppDataProvider;

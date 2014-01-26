@@ -1,34 +1,20 @@
 var lastNodeNumber = 0;
+var appNodesText = $("#appNodesData").text();
+var appNodesData = JSON.parse(appNodesText);
+if (appNodesData != null && appNodesData.length > 0){
+	lastNodeNumber = appNodesData[0].lastNodeNumber;
+}
+
 window.onload = function() {
 	highlightMenu('menu_manage');
-	//TODO:populate last node number
-	//show saved data
-	plotStatusGraph();
+
+	plotStatusGraph(appNodesData);
 }
 
-function plotStatusGraph() {
-
+function plotStatusGraph(appNodesData) {
+	
 }
 
-
-
-jsPlumb.ready(function() {
-	var containerId = "flowDiagramDivId";
-	var instance = jsPlumb.getInstance({
-	// default drag options
-	DragOptions : { cursor: 'pointer', zIndex:2000 },
-	// the overlays to decorate each connection with.  note that the label overlay uses a function to generate the label text; in this
-	// case it returns the 'labelText' member that we set on each connection in the 'init' method below.
-	ConnectionOverlays : [
-		[ "Arrow", { location:-1, width:10, length:7 } ],
-		[ "Label", { 
-			location:0.1,
-			id:"label",
-			cssClass:"aLabel"
-		}]
-	],
-	Container:containerId
-	});		
 	var connectorPaintStyle = {
 		lineWidth:3,
 		strokeStyle:"#61B7CF",
@@ -48,19 +34,28 @@ jsPlumb.ready(function() {
 		strokeStyle:"#216477"
 	};
 
-	// the definition of anchor point (the small blue ones)
-	var anchorpoint = {
-		isTarget:true,
-		isSource:true,
-		maxConnections:1,
-		endpoint:"Dot",
-		paintStyle:{ 
+	var _endpointStyle = { 
+			strokeStyle:"#7AB02C",
+			fillStyle:"transparent",
+			radius:2
+	}
+
+	var _paintStyle = { 
 			strokeStyle:"#7AB02C",
 			fillStyle:"transparent",
 			radius:1,
 			lineWidth:3 
-		},				
-		connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5, alwaysRespectStubs:true } ],								                
+	}
+	var _connector = [ "Flowchart", { stub:[40, 60], gap:5, cornerRadius:5, alwaysRespectStubs:true } ];
+	
+	// the definition of endpoint point (the small blue ones)
+	var endpoint = {
+		isTarget:true,
+		isSource:true,
+		maxConnections:-1,
+		endpoint:"Dot",
+		paintStyle:_paintStyle,
+		connector:_connector,
 		connectorStyle:connectorPaintStyle,
 		hoverPaintStyle:endpointHoverStyle,
 		connectorHoverStyle:connectorHoverStyle,
@@ -68,17 +63,12 @@ jsPlumb.ready(function() {
 	};		
 
 	// the definition of anchor point (the small blue ones)
-	var sourceanchorpoint = {
+	var sourceEndpoint = {
 		isSource:true,
 		maxConnections:-1,
 		endpoint:"Dot",
-		paintStyle:{ 
-			strokeStyle:"#7AB02C",
-			fillStyle:"transparent",
-			radius:1,
-			lineWidth:3 
-		},				
-		connector:[ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5, alwaysRespectStubs:true } ],								                
+		paintStyle:_paintStyle,
+		connector:_connector,
 		connectorStyle:connectorPaintStyle,
 		hoverPaintStyle:endpointHoverStyle,
 		connectorHoverStyle:connectorHoverStyle,
@@ -86,43 +76,72 @@ jsPlumb.ready(function() {
 	};		
 	
 	// the definition of anchor point (the small blue ones)
-	var targetanchorpoint = {
+	var targetEndpoint = {
 		isTarget:true,
 		maxConnections:-1,
 		endpoint:"Dot",
-		paintStyle:{ 
-			strokeStyle:"#7AB02C",
-			fillStyle:"transparent",
-			radius:1,
-			lineWidth:3 
-		},				
-		connector:[ "Flowchart", { stub:[40, 60], gap:5, cornerRadius:5, alwaysRespectStubs:true } ],								                
+		paintStyle:_paintStyle,
+		connector:_connector,
 		connectorStyle:connectorPaintStyle,
 		hoverPaintStyle:endpointHoverStyle,
 		connectorHoverStyle:connectorHoverStyle,
 		dragOptions:{}
 	};
 
-	var _addAnchorpoints = function(nodeId, anchorArr) {
+
+jsPlumb.ready(function() {
+	var containerId = "flowDiagramDivId";
+	var instance = jsPlumb.getInstance({
+	// default drag options
+	DragOptions : { cursor: 'pointer', zIndex:2000 },
+	// the overlays to decorate each connection with.  note that the label overlay uses a function to generate the label text; in this
+	// case it returns the 'labelText' member that we set on each connection in the 'init' method below.
+	ConnectionOverlays : [
+		[ "Arrow", { location:-1, width:10, length:7 } ],
+		[ "Label", { 
+			location:0.1,
+			id:"label",
+			cssClass:"aLabel"
+		}]
+	],
+	Container:containerId
+	});		
+
+	var _addEndpoints = function(nodeId, anchorArr) {
 		for (var i = 0; i < anchorArr.length; i++) {
 			var anchorUUID = nodeId + anchorArr[i];
-			instance.addEndpoint(nodeId, anchorpoint, { anchor:anchorArr[i], uuid:anchorUUID });						
+			instance.addEndpoint(nodeId, endpoint, { anchor:anchorArr[i], uuid:anchorUUID });						
+		}
+	};
+	
+	var _addSourceEndpoints = function(nodeId, anchorArr) {
+		for (var i = 0; i < anchorArr.length; i++) {
+			var anchorUUID = nodeId + anchorArr[i];
+			instance.addEndpoint(nodeId, sourceEndpoint, { anchor:anchorArr[i], uuid:anchorUUID });						
 		}
 	};
 
-	var _addSourceAnchorpoints = function(nodeId, anchorArr) {
+	var _addTargetEndpoints = function(nodeId, anchorArr) {
 		for (var i = 0; i < anchorArr.length; i++) {
 			var anchorUUID = nodeId + anchorArr[i];
-			instance.addEndpoint(nodeId, sourceanchorpoint, { anchor:anchorArr[i], uuid:anchorUUID });						
+			instance.addEndpoint(nodeId, targetEndpoint, { anchor:anchorArr[i], uuid:anchorUUID });						
 		}
 	};
-
-	var _addTargetAnchorpoints = function(nodeId, anchorArr) {
-		for (var i = 0; i < anchorArr.length; i++) {
-			var anchorUUID = nodeId + anchorArr[i];
-			instance.addEndpoint(nodeId, targetanchorpoint, { anchor:anchorArr[i], uuid:anchorUUID });						
-		}
-	};
+	var _connect = function(_source, _target, _sourceAnchor, _targetAnchor){
+		instance.connect({
+			uuids:[_source+_sourceAnchor, _target+_targetAnchor],
+			source:_source,
+			target:_target,
+			endpoint:"Dot",
+			endpointStyle:_endpointStyle,
+			paintStyle:_paintStyle,
+			connector:_connector,
+			connectorStyle:connectorPaintStyle,
+			hoverPaintStyle:endpointHoverStyle,
+			connectorHoverStyle:connectorHoverStyle,
+			dragOptions:{}
+		});
+	}
 
 	function addStartEndNodeDivs() {
 		var parentDiv = $("div"+"#"+containerId);
@@ -138,7 +157,7 @@ jsPlumb.ready(function() {
 								}
 		);
 		var anchorArr = new Array(3);
-		_addSourceAnchorpoints(startId, ["TopCenter", "BottomCenter", "RightMiddle"]);
+		_addSourceEndpoints(startId, ["TopCenter", "BottomCenter", "RightMiddle"]);
 		var endId = '_nodeEndId';
 		$(parentDiv).append("<div id='"+endId+"' class='endNode'></div>" );
 		$('div#'+endId).css(	{"position":"absolute",
@@ -146,13 +165,79 @@ jsPlumb.ready(function() {
 								"right":"5px"
 								}
 		);
-		_addTargetAnchorpoints(endId, ["TopCenter", "BottomCenter", "LeftMiddle"]);
+		_addTargetEndpoints(endId, ["TopCenter", "BottomCenter", "LeftMiddle"]);
 	}
+
+	function addExistingNodes() {
+		if (appNodesData[0].nodes.length > 0) {
+			for (i=0; i< appNodesData[0].nodes.length; i++)
+			{
+				var parentDiv = $("div"+"#"+containerId);
+				$(parentDiv).css("position","relative");
+
+				var nodeId = appNodesData[0].nodes[i].id;
+				var appstatus = appNodesData[0].nodes[i].appstatus;
+				var appstatuscode = appNodesData[0].nodes[i].appstatuscode;
+
+				var nodeNumber = nodeId.replace("_nodeId","");
+				var nodeDeleteAnchorId = '_nodeDeleteAnchorId'+nodeNumber;
+				var nodeGroupId = '_nodeGroupId'+nodeNumber;
+				var nodeNameId = '_nodeNameId'+nodeNumber;
+				var nodeCodeId = '_nodeCodeId'+nodeNumber;
+				var nodeFrequencyId = '_nodeFrequencyId'+nodeNumber;
+				var nodeLinkId = '_nodeLinkId'+nodeNumber;
+				
+				$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeDeleteAnchorId+"' href='#'> <span class='glyphicon glyphicon-remove-circle nodeRemove'/> </div><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>"+appstatus+"</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>4</div><div id='"+nodeLinkId+"' class='nodeLink'><a href=''><input type='hidden' id='"+nodeCodeId+"' value='"+appstatuscode+"'/>Lookup</a></div></div></div>" );
+				$('div#'+nodeId).css(	{"position":"absolute",
+										"top":appNodesData[0].nodes[i].top,
+										"left":appNodesData[0].nodes[i].left
+										}
+				);
+				$("div#"+nodeDeleteAnchorId).click(function removeNode() {
+					 var nodeIDToBeDeleted = $("div#"+this.id).parent().attr('id');
+					 var isDelete = confirm("Delete node?");
+					 if (isDelete == true)
+					 {
+						 instance.remove(nodeIDToBeDeleted);
+					 }
+					 
+				});
+				
+				$("div#"+nodeDeleteAnchorId).mouseover(function () {
+					 $(this).children().addClass('nodeRemoveHover'); 
+				});
+				$("div#"+nodeDeleteAnchorId).mouseout(function () {
+					 $(this).children().removeClass('nodeRemoveHover'); 
+				});
+				//make node draggable
+				instance.draggable($("#"+nodeId), { containment:"parent" });
+				_addEndpoints(nodeId, ["TopCenter", "BottomCenter", "LeftMiddle", "RightMiddle"]);
+			}
+		}
+	}
+
+	
+	function addExistingConections(){
+		if (appNodesData[0].connections != null)
+		{
+			for(var i=0;i<appNodesData[0].connections.length;i++){
+				console.log(appNodesData[0].connections[i].sourcenode+','+appNodesData[0].connections[i].targetnode+','+appNodesData[0].connections[i].sourceanchor+','+appNodesData[0].connections[i].targetanchor);
+				_connect(appNodesData[0].connections[i].sourcenode,appNodesData[0].connections[i].targetnode,appNodesData[0].connections[i].sourceanchor,appNodesData[0].connections[i].targetanchor);
+			}
+		}
+		console.log(instance.getConnections());	
+	}
+
 	// suspend drawing and initialise.
 	instance.doWhileSuspended(function() {
+		console.log(instance.getConnections());
 		addStartEndNodeDivs();
-
-	});
+		if (appNodesData != null && appNodesData.length > 0)
+		{
+			addExistingNodes();
+			addExistingConections();
+		}
+	}); 
 
 
 	$("a#addNodeId").click(function addNode() {
@@ -178,7 +263,12 @@ jsPlumb.ready(function() {
 		);
 		$("div#"+nodeDeleteAnchorId).click(function removeNode() {
 			 var nodeIDToBeDeleted = $("div#"+this.id).parent().attr('id');
-			 instance.remove(nodeIDToBeDeleted);
+			 var isDelete = confirm("Delete node?");
+			 if (isDelete == true)
+			 {
+				 instance.remove(nodeIDToBeDeleted);
+			 }
+			 
 		});
 		
 		$("div#"+nodeDeleteAnchorId).mouseover(function () {
@@ -189,21 +279,10 @@ jsPlumb.ready(function() {
 		});
 		//make node draggable
 		instance.draggable($("#"+nodeId), { containment:"parent" });
-		_addAnchorpoints(nodeId, ["TopCenter", "BottomCenter", "LeftMiddle", "RightMiddle"]);
+		_addEndpoints(nodeId, ["TopCenter", "BottomCenter", "LeftMiddle", "RightMiddle"]);
 	});
 
 	$("a#saveAppFlowId").click(function saveAppFlow() {
-		/*var parentDiv = $("div"+"#"+containerId);
-		$(parentDiv).css("position","relative");
-
-		var startnode = $("div#_nodeStartId");
-		var startNodeTop = $("div#_nodeStartId").css('top')
-		var startNodeLeft = $("div#_nodeStartId").css('left')
-
-		var endnode = $("div#_nodeEndId");
-		var endNodeTop = $("div#_nodeStartId").css('top')
-		var endNodeLeft = $("div#_nodeStartId").css('left')*/
-
 		var nodes = $("div[id^=_nodeId]");
 		console.log('nodes.length : ' +nodes.length);
 		var jnodes = [nodes.length]
@@ -242,7 +321,7 @@ jsPlumb.ready(function() {
 		console.log(connections);
 		console.log('jconnections : '+jconnections)
 
-		var jFlows = {nodes : jnodes, connections : jconnections};
+		var jFlows = {nodes : jnodes, connections : jconnections, lastNodeNumber : lastNodeNumber};
 
 		var request = $.ajax({
 			url: "/manage",

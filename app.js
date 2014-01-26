@@ -66,9 +66,11 @@ app.get('/index', function(req, res){
 });
 
 app.get('/manage', function(req, res){
-  appdataprovider.findAllAppStatuses(function(error, appstatuses){
+  appdataprovider.findManageFlowPageData(function(error, appstatuses, appflownodes){
+	  console.log(appflownodes);
       res.render('manage', {
-            appstatuses:appstatuses
+            appstatuses:appstatuses,
+            appflownodes:appflownodes
         });
   });
 });
@@ -105,6 +107,7 @@ app.post('/appCreate', function(req, res){
   });
 });
 
+
 //clear database
 app.post('/clearDB', function(req, res){
   appdataprovider.clearDB(function(error, msg){
@@ -112,7 +115,6 @@ app.post('/clearDB', function(req, res){
 	  else res.send(msg);
   });
 });
-
 //populate database
 app.post('/populateDB', function(req, res){
   appdataprovider.populateDB(function(error, msg){
@@ -120,6 +122,7 @@ app.post('/populateDB', function(req, res){
 	  else res.send(msg);
   });
 });
+
 
 //Persist application
 app.post('/appPersist', function(req, res){

@@ -21,7 +21,8 @@ block content
         br
         br
         #flowDiagramDivId(style='width: 100%; height: 500px; border: 1px solid black;')
-
+  div(style="visibility: hidden")#appNodesData
+    !{JSON.stringify(appflownodes)}
 
 block pagescript
   script(src='/javascripts/appflow_manage.js')

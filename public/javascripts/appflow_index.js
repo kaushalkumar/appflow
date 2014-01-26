@@ -123,21 +123,23 @@ function addStatusNodeDivs(parentDivId) {
 	    for(var i=0;i<appNodesData[0].nodes.length;i++){
 	    	var j = i+1
 	    	var nodeStatusCD = appNodesData[0].nodes[i].appstatuscode;
-			var nodeId = '_nodeId'+j;
+			var nodeId = appNodesData[0].nodes[i].id;
 	    	var nodeGroupId = 'nodeGroupId'+j;
 	    	var nodeNameId = 'nodeNameId'+j;
 	    	var nodeFrequencyId = 'nodeFrequencyId_' + nodeStatusCD + '_' + j;
 	    	var nodeLinkId = 'nodeLinkId'+j;
 	    	$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>"+appNodesData[0].nodes[i].appstatus+"</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>0</div><div id='"+nodeLinkId+"' class='nodeLink'><a href='/appSearch?statuscode='" + nodeStatusCD + "'> Lookup</a></div></div></div>" );
 			
-			var yAxis = appNodesData[0].nodes[i].top.replace("px","");
-			var xAxis = appNodesData[0].nodes[i].left.replace("px","");
+			//var yAxis = appNodesData[0].nodes[i].top.replace("px","");
+			//var xAxis = appNodesData[0].nodes[i].left.replace("px","");
 			$('div#'+nodeId).css(	{"position":"absolute",
-									"top":(yAxis)-$('div#'+nodeId).outerHeight()/2,
-									"left":(xAxis)-$('div#'+nodeId).outerWidth()/2
+									"top":appNodesData[0].nodes[i].top,
+									"left":appNodesData[0].nodes[i].left
+									//"top":(yAxis)-$('div#'+nodeId).outerHeight()/2,
+									//"left":(xAxis)-$('div#'+nodeId).outerWidth()/2
 									}
 			);
-			_addEndpoints('_nodeId'+j, ["TopCenter", "BottomCenter","LeftMiddle", "RightMiddle"]);
+			_addEndpoints(nodeId, ["TopCenter", "BottomCenter","LeftMiddle", "RightMiddle"]);
 	    }
 
 	    var endId = '_nodeEndId';
@@ -152,6 +154,7 @@ function addStatusNodeDivs(parentDivId) {
 		_addEndpoints("_nodeEndId",["TopCenter", "BottomCenter","LeftMiddle", "RightMiddle"]);
 
 		for(var i=0;i<appNodesData[0].connections.length;i++){
+			//console.log(appNodesData[0].connections[i].sourcenode+','+appNodesData[0].connections[i].targetnode+','+appNodesData[0].connections[i].sourceanchor+','+appNodesData[0].connections[i].targetanchor)
 			_connect(appNodesData[0].connections[i].sourcenode,appNodesData[0].connections[i].targetnode,appNodesData[0].connections[i].sourceanchor,appNodesData[0].connections[i].targetanchor);
 		}
      });
