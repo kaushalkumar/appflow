@@ -1,11 +1,12 @@
 window.onload = function() {
 	highlightMenu('menu_admin');
-	refreshStatusCount();
 }
 
 var appData = [];
 var invertvalObj;
-
+/*Function to ramdomly create/update/delete application.
+Interval of 5 sec is used.
+*/
 function autoAppCrUpDl(){
 	var applicantnames = [	'Oliver','Jack','William','Leo','Ben',
 							'Jude','Lewis','Ryan','Teddy','Daniel',
@@ -17,7 +18,7 @@ function autoAppCrUpDl(){
 						17000,18000,19000,20000,21000];
 	var appStatuses = [];
 
-	var operations = ['Create', 'Update', 'Delete'];
+	var operations = ['Create','Create','Create', 'Update', 'Delete'];//added 'Create' 3 times to increase its probability in getting selected
 	$.ajax({
 		type: 'get',
 		url: '/getStatuses',
@@ -45,7 +46,7 @@ function autoAppCrUpDl(){
 	//if start
 	if (startFlag)
 	{
-		$("#autoAppCrUpDlStatusDivId").text('Started...');
+		$("#autoAppCrUpDlStatusDivId").fadeOut('slow').text('Started...').fadeIn('slow');
 		invertvalObj = setInterval(function(){
 			var operationName = operations[Math.floor(Math.random() * operations.length)];
 	
@@ -64,7 +65,7 @@ function autoAppCrUpDl(){
 							statuscode: statuscode.appstatuscode
 					},
 					success : function(msg){
-						$("#autoAppCrUpDlStatusDivId").text(msg);
+						$("#autoAppCrUpDlStatusDivId").fadeOut('slow').text(msg).fadeIn('slow');
 					},  
 					async:   false
 				}); 
@@ -94,7 +95,7 @@ function autoAppCrUpDl(){
 							statuscode: statuscode.appstatuscode
 					},
 					success : function(msg){
-						$("#autoAppCrUpDlStatusDivId").text(msg);
+						$("#autoAppCrUpDlStatusDivId").fadeOut('slow').text(msg).fadeIn('slow');
 					},  
 					async:   false
 				}); 
@@ -117,7 +118,7 @@ function autoAppCrUpDl(){
 					data : {_id: appToDelete._id
 						},
 					success : function(msg){
-						$("#autoAppCrUpDlStatusDivId").text(msg);
+						$("#autoAppCrUpDlStatusDivId").fadeOut('slow').text(msg).fadeIn('slow');
 					},  
 					async:   false
 				}); 
@@ -129,36 +130,35 @@ function autoAppCrUpDl(){
 		console.log(invertvalObj);
 	} else {
 		//if pause
-		$("#autoAppCrUpDlStatusDivId").text('Paused');
+		$("#autoAppCrUpDlStatusDivId").fadeOut('slow').text('Paused.').fadeIn('slow');
 		console.log(invertvalObj);
 		clearInterval(invertvalObj);
 	}
 
 }
 
-function refreshStatusCount(){
-	setTimeout( function () {
-		var statusHash = {};
-		var appInfoDatas = {};
-		var _url = '/fetchNodeFrequencyData';
-		_url = _url + "?random=" + Math.random();
-		$.ajax({
-			type:'get',
-			dataType: "json",
-			url:_url,
-			success : function(data) {
-				appInfoDatas = data;
-				for(var i=0;i<appInfoDatas.length;i++){
-					statusHash[appInfoDatas[i].appstatuscode] = appInfoDatas[i].count;
-				}
+/*function to reset DB*/
+function resetDB(){
+	console.log('resetDB');
+	$.ajax({
+		type: 'post',
+		url: '/clearDB',
+		dataType: "html",
+		success : function(msg){  
+			console.log(msg);
+			$("#resetDBStatusDivId").fadeOut('slow').text(msg).fadeIn('slow');
+		},  
+		async:   false
+	});  
 
-				$('div[id^="nodeFrequencyId_"]').each(function(){
-					var id = this.id;
-					var appstatusCD = id.substring(id.indexOf("_")+1, id.lastIndexOf("_"));
-					$("#"+id).fadeOut('slow').text(statusHash[appstatusCD]).fadeIn('slow');
-				});
-			}
-		});
-		refreshStatusCount();
-	}, 2000);
+	$.ajax({
+		type: 'post',
+		url: '/populateDB',
+		dataType: "html",
+		success : function(msg){  
+			console.log(msg);
+			$("#resetDBStatusDivId").fadeOut('slow').text(msg).fadeIn('slow');
+		},  
+		async:   false
+	}); 
 }

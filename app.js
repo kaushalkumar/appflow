@@ -105,6 +105,22 @@ app.post('/appCreate', function(req, res){
   });
 });
 
+//clear database
+app.post('/clearDB', function(req, res){
+  appdataprovider.clearDB(function(error, msg){
+      if(error) {}
+	  else res.send(msg);
+  });
+});
+
+//populate database
+app.post('/populateDB', function(req, res){
+  appdataprovider.populateDB(function(error, msg){
+      if(error) {}
+	  else res.send(msg);
+  });
+});
+
 //Persist application
 app.post('/appPersist', function(req, res){
   appdataprovider.persistApplication(req.param('applicantName'), req.param('loanAmount'), req.param('statuscode'), function(error, msg){

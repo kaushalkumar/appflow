@@ -8,7 +8,11 @@ var appNumber = 0;
 
 AppDataProvider = function(host, port) {
   this.db= new Db('omappdb', new Server(host, port, {safe: false}, {auto_reconnect: true}, {}), {w:1});
-  this.db.open(function(){});
+  this.db.open(function(err, db){
+	if(!err) {
+        console.log("Connected to 'omappdb' database");
+    } 
+  });
 };
 
 AppDataProvider.prototype.getCollection= function(callback) {
@@ -202,11 +206,94 @@ AppDataProvider.prototype.saveApplication = function(applicantName, loanAmount, 
     });
 };
 
+//clearDB
+AppDataProvider.prototype.clearDB = function(callback) {
+	var self = this;
+	this.db.collections(function(error, db_collections) {
+		if( error ) callback(error)
+		else {
+			db_collections.forEach(function(db_collection) {
+				if(db_collection.collectionName == 'system.indexes') {
+					return;
+				} else {
+					db_collection.drop(function(error, reply){
+						if(!error){
+							msg = db_collection.collectionName+" dropped Successfully.";
+							console.log(msg);
+							callback(null, msg);
+						} else {
+							console.log(error);
+						}
+					});
+				}
+			});
+			msg = "Database cleared successfully";
+			callback(null, msg);
+		}
+    });
+};
+
+//populateDB
+AppDataProvider.prototype.populateDB = function(callback) {
+	//populate DB
+	var appstatuses = [
+		{"appstatus":"Submitted","appstatuscode":"APP_STATUS_SUBMITTED"},
+		{"appstatus":"Offer Created","appstatuscode":"APP_STATUS_OFFERCREATED"},
+		{"appstatus":"Counter Offer Created","appstatuscode":"APP_STATUS_CTROFFERCREATED"},
+		{"appstatus":"Approved","appstatuscode":"APP_STATUS_APPROVED"},
+		{"appstatus":"Pending Customer Acceptance","appstatuscode":"APP_STATUS_PENCUSTACCEPTANCE"},
+		{"appstatus":"Delivered","appstatuscode":"APP_STATUS_DELIVERED"}
+	];
+	this.db.collection('appstatuses', function(err, collection) {
+		collection.insert(appstatuses, {safe:true}, function(err, result) {
+			if(!err){
+				msg = "appstatuses collection created successfully";
+				callback(null, msg);
+			}
+		});
+	});
+
+	var appdatas = [
+		{"appnumber":1,"applicantname":"George", "loanamount":"2000", "appstatuscode":"APP_STATUS_SUBMITTED"},
+		{"appnumber":2,"applicantname":"Abraham", "loanamount":"2000", "appstatuscode":"APP_STATUS_APPROVED"},
+		{"appnumber":3,"applicantname":"Jhon", "loanamount":"2000", "appstatuscode":"APP_STATUS_APPROVED"},
+		{"appnumber":4,"applicantname":"Richard", "loanamount":"2000", "appstatuscode":"APP_STATUS_SUBMITTED"},
+		{"appnumber":5,"applicantname":"Tom", "loanamount":"2000", "appstatuscode":"APP_STATUS_SUBMITTED"},
+		{"appnumber":6,"applicantname":"Simon", "loanamount":"2000", "appstatuscode":"APP_STATUS_OFFERCREATED"},
+		{"appnumber":7,"applicantname":"Mary", "loanamount":"2000", "appstatuscode":"APP_STATUS_DELIVERED"},
+		{"appnumber":8,"applicantname":"Jim", "loanamount":"2000", "appstatuscode":"APP_STATUS_SUBMITTED"},
+		{"appnumber":9,"applicantname":"Sharon", "loanamount":"2000", "appstatuscode":"APP_STATUS_SUBMITTED"},
+		{"appnumber":10,"applicantname":"Alicia", "loanamount":"2000", "appstatuscode":"APP_STATUS_OFFERCREATED"},
+		{"appnumber":11,"applicantname":"Lara", "loanamount":"2000", "appstatuscode":"APP_STATUS_DELIVERED"}
+	];
+	this.db.collection('appdatas', function(err, collection) {
+		collection.insert(appdatas, {safe:true}, function(err, result) {
+			if(!err){
+				msg = "appdatas collection created successfully";
+				callback(null, msg);
+			}
+		});
+	});
+
+	var flows = [
+		{"nodes":[{"id":"_nodeId1","appstatus":"Submitted","appstatuscode":"APP_STATUS_SUBMITTED","top":"50px","left":"149px"},{"id":"_nodeId2","appstatus":"Approved","appstatuscode":"APP_STATUS_APPROVED","top":"182px","left":"365px"},{"id":"_nodeId3","appstatus":"Pending Customer Acceptance","appstatuscode":"APP_STATUS_PENCUSTACCEPTANCE","top":"79px","left":"639px"}],"connections":[{"sourcenode":"_nodeStartId","sourceanchor":"RightMiddle","targetnode":"_nodeId1","targetanchor":"LeftMiddle"},{"sourcenode":"_nodeId1","sourceanchor":"BottomCenter","targetnode":"_nodeId2","targetanchor":"LeftMiddle"},{"sourcenode":"_nodeId2","sourceanchor":"RightMiddle","targetnode":"_nodeId3","targetanchor":"LeftMiddle"},{"sourcenode":"_nodeId3","sourceanchor":"BottomCenter","targetnode":"_nodeEndId","targetanchor":"LeftMiddle"}]}
+	];
+	this.db.collection('flows', function(err, collection) {
+		collection.insert(flows, {safe:true}, function(err, result) {
+			if(!err){
+				msg = "flows collection created successfully";
+				callback(null, msg);
+			}
+		});
+	});
+	msg = "Database populated successfully";
+	callback(null, msg);
+
+};
+
 //persist application
 AppDataProvider.prototype.persistApplication = function(applicantName, loanAmount, statuscode, callback) {
-	var self = this;
 	var data = {"appnumber":appNumber,"applicantname":applicantName,"loanamount":loanAmount,"appstatuscode":statuscode};
-	console.log(data);
 	appNumber = appNumber+1;
 	this.db.collection('appdatas', function(error, appdatas_collection) {
 		if( error ) callback(error)
@@ -268,7 +355,7 @@ AppDataProvider.prototype.populateAppNumberFromDB= function(callback){
 			callback(error);
 		} else {
 			appdatas_collection.find().sort([['appnumber', -1]]).limit(1).nextObject(function(err, appWithMaxAppNumber) {
-				if(appNumber == 0) {
+				if(appWithMaxAppNumber!=null && appNumber == 0) {
 					appNumber = appWithMaxAppNumber.appnumber+1;
 				}
 			});

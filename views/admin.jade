@@ -10,11 +10,23 @@ block content
       br
       table.table.table-striped.table-bordered
         tr
+          th Description 
+          th Action
+        tr
           td.actionLabel 
-            b Auto Create/Update/Delete Applicant
+            | Reset Database
+          td.actionCommand
+            button.btn.btn-default#resetDBButtonId(type="button" onclick="resetDB()") Reset DB
+            div#resetDBStatusDivId
+        tr
+          td.actionLabel 
+            | Auto Create/Update/Delete Applicant
+            br
+            i Randomly creates/updates/deletes application for demo
           td.actionCommand
             button.btn.btn-default#startPauseButtonId(type="button" onclick="autoAppCrUpDl()") Start
             div#autoAppCrUpDlStatusDivId
+
       br
 block pagescript
   script(src='/javascripts/appflow_admin.js')

@@ -6,7 +6,11 @@ var ObjectID = require('mongodb').ObjectID;
 
 AppMonitorProvider = function(host, port) {
   this.db= new Db('omappdb', new Server(host, port, {safe: false}, {auto_reconnect: true}, {}), {w:1});
-  this.db.open(function(){});
+  this.db.open(function(err, db){
+	if(!err) {
+        console.log("Connected to 'omappdb' database");
+    } 
+  });
 };
 
 
