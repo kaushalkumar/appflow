@@ -75,7 +75,7 @@ function addStatusNodeDivs(parentDivId) {
 				lineWidth:3 
 		}
 
-		var _connector = [ "Flowchart", { stub:[40, 60], gap:10, cornerRadius:5, alwaysRespectStubs:true } ];
+		var _connector = [ "Flowchart", { stub:[40, 60], gap:5, cornerRadius:5, alwaysRespectStubs:true } ];
 
 		var endpoint = {
 			endpoint:"Dot",
