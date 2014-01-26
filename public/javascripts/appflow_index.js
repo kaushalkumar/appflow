@@ -160,7 +160,7 @@ function addStatusNodeDivs(parentDivId) {
 }
 
 function refreshStatusCount(){
-	setTimeout( function () {
+	setInterval( function () {
 		var statusHash = {};
 		var appInfoDatas = {};
 		var _url = '/fetchNodeFrequencyData';
@@ -182,6 +182,5 @@ function refreshStatusCount(){
 				});
 			}
 		});
-		refreshStatusCount();
 	}, 2000);
 }
