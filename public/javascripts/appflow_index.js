@@ -129,7 +129,8 @@ function addStatusNodeDivs(parentDivId) {
 	    	var nodeNameId = 'nodeNameId'+j;
 	    	var nodeFrequencyId = 'nodeFrequencyId_' + nodeStatusCD + '_' + j;
 	    	var nodeLinkId = 'nodeLinkId'+j;
-	    	$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>"+appNodesData[0].nodes[i].appstatus+"</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>0</div><div id='"+nodeLinkId+"' class='nodeLink'><a href='/appSearch?statuscode='" + nodeStatusCD + "'> Lookup</a></div></div></div>" );
+			console.log(nodeStatusCD);
+	    	$(parentDiv).append("<div id='"+nodeId+"' class='node'><div id='"+nodeGroupId+"' class='nodeGroup'><div id='"+nodeNameId+"' class='nodeName'>"+appNodesData[0].nodes[i].appstatus+"</div><div id='"+nodeFrequencyId+"' class='nodeFrequency'>0</div><div id='"+nodeLinkId+"' class='nodeLink'><a href=\"/appSearch?statuscode=" + nodeStatusCD + "\"> Lookup</a></div></div></div>" );
 			
 			//var yAxis = appNodesData[0].nodes[i].top.replace("px","");
 			//var xAxis = appNodesData[0].nodes[i].left.replace("px","");
