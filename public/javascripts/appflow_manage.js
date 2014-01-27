@@ -46,7 +46,7 @@ function plotStatusGraph(appNodesData) {
 			radius:1,
 			lineWidth:3 
 	}
-	var _connector = [ "Flowchart", { stub:[40, 60], gap:5, cornerRadius:5, alwaysRespectStubs:true } ];
+	var _connector = [ "Flowchart", { stub:[10, 10], gap:5, cornerRadius:5, alwaysRespectStubs:true } ];
 	
 	// the definition of endpoint point (the small blue ones)
 	var endpoint = {
