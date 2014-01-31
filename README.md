@@ -8,16 +8,20 @@ Please follow the steps given below to get this working
 
 A. Install mongodb
    1. Download MongoDB from http://www.mongodb.org/downloads. 
+      
       Choose Windows 64 bits. Unzip it in some folder, say C:\mongodb-2.4.8.
    2. Create a file named mongod.cfg with following configuration
 
       ##store data here
+      
       dbpath=C:\mongodb-2.4.8\data\db
  
       ##all output go here
+      
       logpath=C:\mongodb-2.4.8\log\mongo.log
  
       ##log read and write operations
+      
       diaglog=3
    3. Add  config file (mongod.cfg) inside the extracted location. For example C:\mongodb-2.4.8.
    4. Create a folder named “data/db” inside the directory “C:\mongodb-2.4.8”
