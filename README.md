@@ -10,6 +10,7 @@ A. Install mongodb
    1. Download MongoDB from http://www.mongodb.org/downloads. 
       Choose Windows 64 bits. Unzip it in some folder, say C:\mongodb-2.4.8.
    2. Create a file named mongod.cfg with following configuration
+
       ##store data here
       dbpath=C:\mongodb-2.4.8\data\db
  
@@ -20,23 +21,35 @@ A. Install mongodb
       diaglog=3
    3. Add  config file (mongod.cfg) inside the extracted location. For example C:\mongodb-2.4.8.
    4. Create a folder named “data/db” inside the directory “C:\mongodb-2.4.8”
+      
       Note: log folder will be created when we start using mongodb.
+      
       data – folder where db is stored
+      
       log – folder where mongodb logs are stored
+      
       These configurations are actually in mongod.cfg file.
       
 B. Start mongodb and test
    1. Start mongodb Server by using the following command from command prompt
+      
       C:\mongodb-2.4.8\bin>mongod --config C:\mongodb-2.4.8\mongod.cfg
    2. Connect to mongodb by executing the following command from command prompt
+      
       C:\mongodb-2.4.8\bin>mongo
    3. You would see a following output, which means that you are connected to “test” database in mongodb
+      
       C:\mongodb-2.4.8\bin>mongo
+      
       MongoDB shell version: 2.4.8
+      
       connecting to: test
+      
       >
-   4. [Optional ]Execute following basic commands from mongodb console
+   4. [Optional] Execute following basic commands from mongodb console
+      
       To get list of databases - 
+      
       > show dbs
       
 C. Install nodejs
@@ -47,12 +60,16 @@ D. Intall appflow in nodejs
    1. Download the code in any folder in your system (let us say u did it in C:\appflow)
    2. Open command prompt and navigate to C:\appflow
    3. Execute the following command
+      
       npm install express –g
+      
       npm install -d
+      
       This will install all project dependencies for this project inside directory called node_modules
       
 E. Launch appflow
    1. From command prompt execute following command
+
       node app.js
    2. Open browser and hit http://localhost:3000
    
